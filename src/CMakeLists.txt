@@ -48,6 +48,10 @@ endif()
 
 add_library(flexisusy ${FLEXISUSY_SRC})
 
+if(ENABLE_COMPILER_WARNINGS)
+  target_compile_options(flexisusy PRIVATE ${CXX_WARNING_FLAGS})
+endif(ENABLE_COMPILER_WARNINGS)
+
 target_include_directories(flexisusy
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
