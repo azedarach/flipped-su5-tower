@@ -1,0 +1,91 @@
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+/* generated at @DATE@ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define PKGNAME "@PROJECT_NAME@"
+
+#define GIT_COMMIT            "@GIT_COMMIT@"
+
+#define FLEXIBLESUSY_VERSION  "2.2.0"
+#define FLEXIBLESUSY_MAJOR    2
+#define FLEXIBLESUSY_MINOR    2
+#define FLEXIBLESUSY_PATCH    0
+#define FLEXIBLESUSY_EXTRA    ""
+#define FLEXIBLESUSY_GIT_COMMIT "fff0745460c710cd894e99b5b50967ac42dc9aba"
+
+#define MATHEMATICA_VERSION   11.2
+
+#define SARAH_VERSION         "4.13.0"
+#define SARAH_MAJOR           4
+#define SARAH_MINOR           13
+#define SARAH_PATCH           0
+
+#define BOOST_VERSION         @Boost_VERSION@
+#define EIGEN_VERSION         "@EIGEN3_VERSION@"
+#define GM2CALC_VERSION       "@GM2CALC_VERSION@"
+#define GSL_VERSION           "@GSL_VERSION@"
+#define HIMALAYA_VERSION      "@HIMALAYA_VERSION@"
+
+/* System information */
+#define OPERATING_SYSTEM      "@CMAKE_SYSTEM_NAME@"
+#define KERNEL_VERSION        "@CMAKE_SYSTEM_VERSION@"
+
+/* Switches */
+
+/* Enable colored printout */
+#cmakedefine ENABLE_COLORS 1
+
+/* Enable eigenvalues error check */
+#cmakedefine ENABLE_MASS_ERROR_CHECK 1
+
+/* Enable debug mode */
+#cmakedefine ENABLE_DEBUG 1
+
+/* Enable silent mode */
+#cmakedefine ENABLE_SILENT 1
+
+/* Enable verbose mode */
+#cmakedefine ENABLE_VERBOSE 1
+
+/* Enable fflite */
+#cmakedefine ENABLE_FFLITE 1
+
+/* Enable Himalaya */
+#cmakedefine ENABLE_HIMALAYA 1
+
+/* Enable LAPACK */
+#cmakedefine ENABLE_LAPACK 1
+
+/* Enable LibraryLink */
+#cmakedefine ENABLE_LIBRARYLINK 1
+
+/* Enable MKL ILP64 workaround */
+#cmakedefine ENABLE_ILP64MKL_WORKAROUND 1
+
+/* Enable LoopTools */
+#cmakedefine ENABLE_LOOPTOOLS 1
+
+/* Enable odeint */
+#cmakedefine ENABLE_ODEINT 1
+
+/* Enable sqlite */
+#cmakedefine ENABLE_SQLITE 1
+
+/* Enable multi-threading */
+#cmakedefine ENABLE_THREADS 1
+
+/* Enable two-scale BVP solver */
+#cmakedefine ENABLE_TWO_SCALE_SOLVER 1
+
+/* Enable lattice BVP solver */
+#cmakedefine ENABLE_LATTICE_SOLVER 1
+
+/* Enable semi-analytic BVP solver */
+#cmakedefine ENABLE_SEMI_ANALYTIC_SOLVER 1
+
+/* Enable statements for addons */
+#cmakedefine ENABLE_GM2Calc 1
+
+#endif
