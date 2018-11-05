@@ -1,0 +1,80 @@
+#!/bin/sh
+
+# This script lists all model files for a given model.
+# Sub-models can be specified after a /
+#
+# Examples:
+#
+#   ./list_sarah_model_files.sh ~/SARAH/Models MSSM
+#   ./list_sarah_model_files.sh ~/SARAH/Models MSSM/CKM
+
+if test $# -ne 2; then
+    echo "Error: 2 arguments required"
+    echo "Usage: $0 <sarah-model-dir> <sarah-model-name>[/<sub-model>]"
+    echo ""
+    echo "Examples:"
+    echo ""
+    echo "   $0 ~/SARAH/Models MSSM"
+    echo "   $0 ~/SARAH/Models MSSM/CKM"
+    exit 1
+fi
+
+convert_dos_paths() {
+    case "$OPERATING_SYSTEM" in
+    CYGWIN_NT*) xargs -d \  cygpath ;;
+    *)          cat ;;
+    esac
+}
+
+check_exist() {
+    dir=$1
+    shift
+
+    local f=
+    deps=
+    while test ! "x$1" = "x" ; do
+        f="$(echo "$dir/$1" | sed -e 's#//*#/#g')"
+        [ -e "$f" ] || {
+            deps=
+            return 1
+        }
+        deps="$deps $f"
+        shift
+    done
+
+    return 0
+}
+
+sarah_model_dir="$1"
+model="$2"
+OPERATING_SYSTEM="@OPERATING_SYSTEM@"
+# directory of this script
+BASEDIR=$(dirname $0)
+fs_sarah_model_dir="${BASEDIR}/../sarah"
+
+base_model=$(echo "$model" | awk -F '/' '{ print $1 }')
+sub_model=$(echo "$model" | awk -F '/' '{ print $2 }')
+
+# SARAH model file
+model_files=
+if [ -z "$sub_model" ] ; then
+    model_files="${base_model}.m"
+else
+    model_files="${base_model}-${sub_model}.m"
+fi
+model_files="$model_files parameters.m"
+model_files="$model_files particles.m"
+
+if [ -z "$sub_model" ] ; then
+    sarah_model_dir="${sarah_model_dir}/${base_model}/"
+    fs_sarah_model_dir="${fs_sarah_model_dir}/${base_model}/"
+else
+    sarah_model_dir="${sarah_model_dir}/${base_model}/${sub_model}/"
+    fs_sarah_model_dir="${fs_sarah_model_dir}/${base_model}/${sub_model}/"
+fi
+
+check_exist "$sarah_model_dir" ${model_files} || \
+check_exist "$fs_sarah_model_dir" ${model_files}
+
+echo "$deps" | convert_dos_paths
+exit 0
