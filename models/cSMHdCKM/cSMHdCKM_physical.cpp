@@ -46,7 +46,7 @@ void cSMHdCKM_physical::clear()
    MVWp = 0.;
    MVP = 0.;
    MVZ = 0.;
-
+   UV = Eigen::Matrix<std::complex<double>,3,3>::Zero();
 }
 
 /**
@@ -187,7 +187,24 @@ Eigen::ArrayXd cSMHdCKM_physical::get() const
    pars(128) = ZZ(0,1);
    pars(129) = ZZ(1,0);
    pars(130) = ZZ(1,1);
-
+   pars(131) = Re(UV(0,0));
+   pars(132) = Im(UV(0,0));
+   pars(133) = Re(UV(0,1));
+   pars(134) = Im(UV(0,1));
+   pars(135) = Re(UV(0,2));
+   pars(136) = Im(UV(0,2));
+   pars(137) = Re(UV(1,0));
+   pars(138) = Im(UV(1,0));
+   pars(139) = Re(UV(1,1));
+   pars(140) = Im(UV(1,1));
+   pars(141) = Re(UV(1,2));
+   pars(142) = Im(UV(1,2));
+   pars(143) = Re(UV(2,0));
+   pars(144) = Im(UV(2,0));
+   pars(145) = Re(UV(2,1));
+   pars(146) = Im(UV(2,1));
+   pars(147) = Re(UV(2,2));
+   pars(148) = Im(UV(2,2));
 
    return pars;
 }
@@ -254,6 +271,15 @@ void cSMHdCKM_physical::set(const Eigen::ArrayXd& pars)
    ZZ(0,1) = pars(128);
    ZZ(1,0) = pars(129);
    ZZ(1,1) = pars(130);
+   UV(0,0) = std::complex<double>(pars(131), pars(132));
+   UV(0,1) = std::complex<double>(pars(133), pars(134));
+   UV(0,2) = std::complex<double>(pars(135), pars(136));
+   UV(1,0) = std::complex<double>(pars(137), pars(138));
+   UV(1,1) = std::complex<double>(pars(139), pars(140));
+   UV(1,2) = std::complex<double>(pars(141), pars(142));
+   UV(2,0) = std::complex<double>(pars(143), pars(144));
+   UV(2,1) = std::complex<double>(pars(145), pars(146));
+   UV(2,2) = std::complex<double>(pars(147), pars(148));
 
 }
 
@@ -335,6 +361,7 @@ void cSMHdCKM_physical::print(std::ostream& ostr) const
    ostr << "Ve = " << Ve << '\n';
    ostr << "Ue = " << Ue << '\n';
    ostr << "ZZ = " << ZZ << '\n';
+   ostr << "UV = " << UV << '\n';
 
 }
 

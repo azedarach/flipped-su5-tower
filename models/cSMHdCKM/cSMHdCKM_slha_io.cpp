@@ -277,9 +277,11 @@ void cSMHdCKM_slha_io::set_mixing_matrices(const cSMHdCKM_physical& physical,
       slha_io.set_block("UDRMIX", LOCALPHYSICAL(Ud), "Ud");
       slha_io.set_block("UELMIX", LOCALPHYSICAL(Ve), "Ve");
       slha_io.set_block("UERMIX", LOCALPHYSICAL(Ue), "Ue");
+      slha_io.set_block("UVMIX", LOCALPHYSICAL(UV), "UV");
    }
 
    if (print_imaginary_parts_of_majorana_mixings) {
+      slha_io.set_block_imag("IMUVMIX", LOCALPHYSICAL(UV), "UV");
    }
 
 }
@@ -492,6 +494,13 @@ void cSMHdCKM_slha_io::fill_drbar_parameters(cSMHdCKM_mass_eigenstates& model) c
    model.set_mu2(slha_io.read_entry("SM", 1));
    model.set_Lambdax(slha_io.read_entry("SM", 2));
    model.set_v(slha_io.read_entry("HMIX", 3));
+   {
+      Eigen::Matrix<std::complex<double>,3,3> Kappa;
+      slha_io.read_block("Kappa", Kappa);
+      Eigen::Matrix<std::complex<double>,3,3> IMKappa;
+      slha_io.read_block("IMKappa", IMKappa);
+      model.set_Kappa(Kappa + std::complex<double>(0.,1.)*IMKappa);
+   }
 
 
    model.set_scale(read_scale());
@@ -609,7 +618,11 @@ void cSMHdCKM_slha_io::fill_physical(cSMHdCKM_physical& physical) const
       slha_io.read_block("UERMIX", Ue);
       LOCALPHYSICAL(Ue) = Ue;
    }
-
+   {
+      DEFINE_PHYSICAL_PARAMETER(UV);
+      slha_io.read_block("UVMIX", UV);
+      LOCALPHYSICAL(UV) = UV;
+   }
    LOCALPHYSICAL(MVG) = slha_io.read_entry("MASS", 21);
    LOCALPHYSICAL(MFv)(0) = slha_io.read_entry("MASS", 12);
    LOCALPHYSICAL(MFv)(1) = slha_io.read_entry("MASS", 14);

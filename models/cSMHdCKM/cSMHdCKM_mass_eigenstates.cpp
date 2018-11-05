@@ -422,6 +422,7 @@ void CLASSNAME::print(std::ostream& ostr) const
    ostr << "Ve = " << Ve << '\n';
    ostr << "Ue = " << Ue << '\n';
    ostr << "ZZ = " << ZZ << '\n';
+   ostr << "UV = " << UV << '\n';
 
    physical.print(ostr);
 }
@@ -648,7 +649,7 @@ void CLASSNAME::clear_DRbar_parameters()
    MVWp = 0.;
    MVP = 0.;
    MVZ = 0.;
-
+   UV = Eigen::Matrix<std::complex<double>,3,3>::Zero();
 
 
 }
@@ -779,6 +780,15 @@ void CLASSNAME::set_DRbar_masses_and_mixings(const Eigen::ArrayXd& pars)
    ZZ(0,1) = pars(128);
    ZZ(1,0) = pars(129);
    ZZ(1,1) = pars(130);
+   UV(0,0) = std::complex<double>(pars(131), pars(132));
+   UV(0,1) = std::complex<double>(pars(133), pars(134));
+   UV(0,2) = std::complex<double>(pars(135), pars(136));
+   UV(1,0) = std::complex<double>(pars(137), pars(138));
+   UV(1,1) = std::complex<double>(pars(139), pars(140));
+   UV(1,2) = std::complex<double>(pars(141), pars(142));
+   UV(2,0) = std::complex<double>(pars(143), pars(144));
+   UV(2,1) = std::complex<double>(pars(145), pars(146));
+   UV(2,2) = std::complex<double>(pars(147), pars(148));
 
 }
 
@@ -900,7 +910,24 @@ Eigen::ArrayXd CLASSNAME::get_DRbar_masses_and_mixings() const
    pars(128) = ZZ(0,1);
    pars(129) = ZZ(1,0);
    pars(130) = ZZ(1,1);
-
+   pars(131) = Re(UV(0,0));
+   pars(132) = Im(UV(0,0));
+   pars(133) = Re(UV(0,1));
+   pars(134) = Im(UV(0,1));
+   pars(135) = Re(UV(0,2));
+   pars(136) = Im(UV(0,2));
+   pars(137) = Re(UV(1,0));
+   pars(138) = Im(UV(1,0));
+   pars(139) = Re(UV(1,1));
+   pars(140) = Im(UV(1,1));
+   pars(141) = Re(UV(1,2));
+   pars(142) = Im(UV(1,2));
+   pars(143) = Re(UV(2,0));
+   pars(144) = Im(UV(2,0));
+   pars(145) = Re(UV(2,1));
+   pars(146) = Im(UV(2,1));
+   pars(147) = Re(UV(2,2));
+   pars(148) = Im(UV(2,2));
 
    return pars;
 }
@@ -976,12 +1003,12 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fv() const
 
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fv;
 
-   mass_matrix_Fv(0,0) = 0;
-   mass_matrix_Fv(0,1) = 0;
-   mass_matrix_Fv(0,2) = 0;
-   mass_matrix_Fv(1,1) = 0;
-   mass_matrix_Fv(1,2) = 0;
-   mass_matrix_Fv(2,2) = 0;
+   mass_matrix_Fv(0,0) = 0.25*Sqr(v)*Kappa(0,0);
+   mass_matrix_Fv(0,1) = 0.25*Sqr(v)*Kappa(0,1) + 0.25*Sqr(v)*Kappa(1,0);
+   mass_matrix_Fv(0,2) = 0.25*Sqr(v)*Kappa(0,2) + 0.25*Sqr(v)*Kappa(2,0);
+   mass_matrix_Fv(1,1) = 0.25*Sqr(v)*Kappa(1,1);
+   mass_matrix_Fv(1,2) = 0.25*Sqr(v)*Kappa(1,2) + 0.25*Sqr(v)*Kappa(2,1);
+   mass_matrix_Fv(2,2) = 0.25*Sqr(v)*Kappa(2,2);
 
    Symmetrize(mass_matrix_Fv);
 
@@ -990,8 +1017,18 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fv() const
 
 void CLASSNAME::calculate_MFv()
 {
+   const auto mass_matrix_Fv(get_mass_matrix_Fv());
 
-   MFv.setConstant(0);
+#ifdef CHECK_EIGENVALUE_ERROR
+   double eigenvalue_error;
+   fs_diagonalize_symmetric(mass_matrix_Fv, MFv, UV, eigenvalue_error);
+   problems.flag_bad_mass(cSMHdCKM_info::Fv, eigenvalue_error > precision * Abs(
+                             MFv(0)));
+#else
+   fs_diagonalize_symmetric(mass_matrix_Fv, MFv, UV);
+#endif
+   normalize_to_interval(UV);
+
 }
 
 double CLASSNAME::get_mass_matrix_Ah() const
@@ -2477,6 +2514,41 @@ std::complex<double> CLASSNAME::CpbarFuFdVWpPL(int gO1, int gI2) const
    return result;
 }
 
+std::complex<double> CLASSNAME::CpFvFvUhhPL(int gI1, int gI2) const
+{
+   const std::complex<double> result = -0.25*v*(
+      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa(j1,j2)))
+      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa(j1,j2))));
+
+   return result;
+}
+
+std::complex<double> CLASSNAME::CpFvFvUhhPR(int gI1, int gI2) const
+{
+   const std::complex<double> result = -0.25*v*(
+      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
+      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
+
+   return result;
+}
+
+std::complex<double> CLASSNAME::CpFvFvUAhPL(int gI1, int gI2) const
+{
+   const std::complex<double> result = std::complex<double>(0.,0.25)*v*(
+      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa(j1,j2)))
+      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa(j1,j2))));
+
+   return result;
+}
+
+std::complex<double> CLASSNAME::CpFvFvUAhPR(int gI1, int gI2) const
+{
+   const std::complex<double> result = std::complex<double>(0.,-0.25)*v*(
+      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
+      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
+
+   return result;
+}
 
 std::complex<double> CLASSNAME::self_energy_Hm_1loop(double p ) const
 {
@@ -3482,7 +3554,35 @@ void CLASSNAME::calculate_MVG_pole()
 void CLASSNAME::calculate_MFv_pole()
 {
    // diagonalization with medium precision
-   PHYSICAL(MFv).setConstant(0.);
+   const Eigen::Matrix<std::complex<double>,3,3> M_tree(get_mass_matrix_Fv());
+   for (int es = 0; es < 3; ++es) {
+      const double p = Abs(MFv(es));
+      const Eigen::Matrix<std::complex<double>,3,3> self_energy_1 =
+         self_energy_Fv_1loop_1(p);
+      const Eigen::Matrix<std::complex<double>,3,3> self_energy_PL =
+         self_energy_Fv_1loop_PL(p);
+      const Eigen::Matrix<std::complex<double>,3,3> self_energy_PR =
+         self_energy_Fv_1loop_PR(p);
+      const Eigen::Matrix<std::complex<double>,3,3> delta_M(
+         -self_energy_PR * M_tree - M_tree * self_energy_PL - self_energy_1);
+      const Eigen::Matrix<std::complex<double>,3,3> M_loop(
+         M_tree + 0.5 * delta_M + delta_M.transpose());
+      Eigen::Array<double,3,1> eigen_values;
+      decltype(UV) mix_UV;
+#ifdef CHECK_EIGENVALUE_ERROR
+      double eigenvalue_error;
+      fs_diagonalize_symmetric(M_loop, eigen_values, mix_UV,
+                               eigenvalue_error);
+      problems.flag_bad_mass(cSMHdCKM_info::Fv, eigenvalue_error > precision
+                             * Abs(eigen_values(0)));
+#else
+      fs_diagonalize_symmetric(M_loop, eigen_values, mix_UV);
+#endif
+      normalize_to_interval(mix_UV);
+      if (es == 0)
+         PHYSICAL(UV) = mix_UV;
+      PHYSICAL(MFv(es)) = Abs(eigen_values(es));
+   }
 }
 
 void CLASSNAME::calculate_Mhh_pole()
@@ -3727,9 +3827,17 @@ double CLASSNAME::calculate_MVZ_pole(double p)
 
 
 
-double CLASSNAME::calculate_MFv_DRbar(double, int) const
+double CLASSNAME::calculate_MFv_DRbar(double m_pole, int idx) const
 {
-   return 0.0;
+   const double p = m_pole;
+   const double self_energy_1 = Re(self_energy_Fv_1loop_1(p, idx, idx));
+   const double self_energy_PL = Re(self_energy_Fv_1loop_PL(p, idx, idx));
+   const double self_energy_PR = Re(self_energy_Fv_1loop_PR(p, idx, idx));
+
+   const double m_drbar = m_pole + self_energy_1 + m_pole * (self_energy_PL
+                                                             + self_energy_PR);
+
+   return m_drbar;
 }
 
 double CLASSNAME::calculate_MFe_DRbar(double m_sm_msbar, int idx) const

@@ -8,6 +8,7 @@ set(cSMHdCKM_SRC
   cSMHdCKM_observables.cpp
   cSMHdCKM_physical.cpp
   cSMHdCKM_slha_io.cpp
+  cSMHdCKM_soft_beta_Kappa.cpp
   cSMHdCKM_soft_beta_mu2.cpp
   cSMHdCKM_soft_beta_v.cpp
   cSMHdCKM_soft_parameters.cpp
@@ -44,7 +45,7 @@ endif(ENABLE_SEMI_ANALYTIC_SOLVER)
 add_library(cSMHdCKM ${cSMHdCKM_SRC})
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(cSMHdCKM PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(cSMHdCKM PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_include_directories(cSMHdCKM
@@ -64,7 +65,7 @@ target_link_libraries(cSMHdCKM
   GSL::gsl
   LAPACK::LAPACK
   LoopTools::LoopTools
-  ${SQLITE3_LIBRARY}
+  SQLite3::SQLite3
   Threads::Threads
 )
 
@@ -76,7 +77,7 @@ if(ENABLE_LIBRARYLINK)
   add_library(LLcSMHdCKM ${LLcSMHdCKM_SRC})
 
   if(ENABLE_COMPILER_WARNINGS)
-    target_compile_options(LLcSMHdCKM PRIVATE ${CXX_WARNING_FLAGS})
+    target_compile_options(LLcSMHdCKM PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
   endif(ENABLE_COMPILER_WARNINGS)
 
   target_include_directories(LLcSMHdCKM
@@ -99,7 +100,7 @@ if(ENABLE_LIBRARYLINK)
     LAPACK::LAPACK
     LoopTools::LoopTools
     ${Mathematica_MathLink_LIBRARY}
-    ${SQLITE3_LIBRARY}
+    SQLite3::SQLite3
     Threads::Threads
     )
 
@@ -110,7 +111,7 @@ add_executable(run_cSMHdCKM
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(run_cSMHdCKM PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(run_cSMHdCKM PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(run_cSMHdCKM
@@ -126,7 +127,7 @@ target_link_libraries(run_cSMHdCKM
   GSL::gsl
   LAPACK::LAPACK
   LoopTools::LoopTools
-  ${SQLITE3_LIBRARY}
+  SQLite3::SQLite3
   Threads::Threads
 )
 
@@ -135,7 +136,7 @@ add_executable(run_cmd_line_cSMHdCKM
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(run_cmd_line_cSMHdCKM PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(run_cmd_line_cSMHdCKM PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(run_cmd_line_cSMHdCKM
@@ -151,7 +152,7 @@ target_link_libraries(run_cmd_line_cSMHdCKM
   GSL::gsl
   LAPACK::LAPACK
   LoopTools::LoopTools
-  ${SQLITE3_LIBRARY}
+  SQLite3::SQLite3
   Threads::Threads
 )
 
@@ -160,7 +161,7 @@ add_executable(scan_cSMHdCKM
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(scan_cSMHdCKM PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(scan_cSMHdCKM PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(scan_cSMHdCKM
@@ -176,7 +177,7 @@ target_link_libraries(scan_cSMHdCKM
   GSL::gsl
   LAPACK::LAPACK
   LoopTools::LoopTools
-  ${SQLITE3_LIBRARY}
+  SQLite3::SQLite3
   Threads::Threads
 )
 

@@ -145,7 +145,8 @@ public:
    std::complex<double> get_Ue(int i, int k) const { return Ue(i,k); }
    const Eigen::Matrix<double,2,2>& get_ZZ() const { return ZZ; }
    double get_ZZ(int i, int k) const { return ZZ(i,k); }
-
+   const Eigen::Matrix<std::complex<double>,3,3>& get_UV() const { return UV; }
+   std::complex<double> get_UV(int i, int k) const { return UV(i,k); }
 
 
 
@@ -320,6 +321,10 @@ public:
    double CpbarFeFvHmPR(int , int ) const;
    double CpbarFuFdVWpPR(int , int ) const;
    std::complex<double> CpbarFuFdVWpPL(int gO1, int gI2) const;
+   std::complex<double> CpFvFvUhhPL(int gI1, int gI2) const;
+   std::complex<double> CpFvFvUhhPR(int gI1, int gI2) const;
+   std::complex<double> CpFvFvUAhPL(int gI1, int gI2) const;
+   std::complex<double> CpFvFvUAhPR(int gI1, int gI2) const;
    std::complex<double> self_energy_Hm_1loop(double p ) const;
    std::complex<double> self_energy_Ah_1loop(double p ) const;
    std::complex<double> self_energy_hh_1loop(double p ) const;
@@ -466,6 +471,7 @@ private:
    Eigen::Matrix<std::complex<double>,3,3> Ve{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> Ue{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<double,2,2> ZZ{Eigen::Matrix<double,2,2>::Zero()};
+   Eigen::Matrix<std::complex<double>,3,3> UV{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
 
    // phases
 

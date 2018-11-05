@@ -56,7 +56,7 @@ struct cSMHdCKM_physical {
    Eigen::Matrix<std::complex<double>,3,3> Ve{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> Ue{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<double,2,2> ZZ{Eigen::Matrix<double,2,2>::Zero()};
-
+   Eigen::Matrix<std::complex<double>,3,3> UV{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
 };
 
 std::ostream& operator<<(std::ostream&, const cSMHdCKM_physical&);

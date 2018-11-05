@@ -43,10 +43,10 @@ cSMHdCKM_soft_parameters::cSMHdCKM_soft_parameters(const cSMHdCKM_input_paramete
 
 cSMHdCKM_soft_parameters::cSMHdCKM_soft_parameters(
    const cSMHdCKM_susy_parameters& susy_model
-   , double mu2_, double v_
+   , double mu2_, double v_, const Eigen::Matrix<std::complex<double>,3,3>& Kappa_
 )
    : cSMHdCKM_susy_parameters(susy_model)
-   , mu2(mu2_), v(v_)
+   , mu2(mu2_), v(v_), Kappa(Kappa_)
 {
    set_number_of_parameters(numberOfParameters);
 }
@@ -60,16 +60,20 @@ cSMHdCKM_soft_parameters cSMHdCKM_soft_parameters::calc_beta(int loops) const
 {
    double beta_mu2 = 0.;
    double beta_v = 0.;
+   Eigen::Matrix<std::complex<double>,3,3> beta_Kappa
+      = Eigen::Matrix<std::complex<double>,3,3>::Zero();
 
    if (loops > 0) {
       const auto TRACE_STRUCT = CALCULATE_TRACES(loops);
 
       beta_mu2 += calc_beta_mu2_1_loop(TRACE_STRUCT);
       beta_v += calc_beta_v_1_loop(TRACE_STRUCT);
+      beta_Kappa += calc_beta_Kappa_1_loop(TRACE_STRUCT);
 
       if (loops > 1) {
          beta_mu2 += calc_beta_mu2_2_loop(TRACE_STRUCT);
          beta_v += calc_beta_v_2_loop(TRACE_STRUCT);
+         beta_Kappa += calc_beta_Kappa_2_loop(TRACE_STRUCT);
 
          if (loops > 2) {
          #ifdef ENABLE_THREADS
@@ -94,7 +98,7 @@ cSMHdCKM_soft_parameters cSMHdCKM_soft_parameters::calc_beta(int loops) const
 
    const cSMHdCKM_susy_parameters susy_betas(cSMHdCKM_susy_parameters::calc_beta(loops));
 
-   return cSMHdCKM_soft_parameters(susy_betas, beta_mu2, beta_v);
+   return cSMHdCKM_soft_parameters(susy_betas, beta_mu2, beta_v, beta_Kappa);
 }
 
 cSMHdCKM_soft_parameters cSMHdCKM_soft_parameters::calc_beta() const
@@ -108,7 +112,7 @@ void cSMHdCKM_soft_parameters::clear()
 
    mu2 = 0.;
    v = 0.;
-
+   Kappa = Eigen::Matrix<std::complex<double>,3,3>::Zero();
 }
 
 Eigen::ArrayXd cSMHdCKM_soft_parameters::get() const
@@ -118,7 +122,24 @@ Eigen::ArrayXd cSMHdCKM_soft_parameters::get() const
 
    pars(58) = mu2;
    pars(59) = v;
-
+   pars(60) = Re(Kappa(0,0));
+   pars(61) = Im(Kappa(0,0));
+   pars(62) = Re(Kappa(0,1));
+   pars(63) = Im(Kappa(0,1));
+   pars(64) = Re(Kappa(0,2));
+   pars(65) = Im(Kappa(0,2));
+   pars(66) = Re(Kappa(1,0));
+   pars(67) = Im(Kappa(1,0));
+   pars(68) = Re(Kappa(1,1));
+   pars(69) = Im(Kappa(1,1));
+   pars(70) = Re(Kappa(1,2));
+   pars(71) = Im(Kappa(1,2));
+   pars(72) = Re(Kappa(2,0));
+   pars(73) = Im(Kappa(2,0));
+   pars(74) = Re(Kappa(2,1));
+   pars(75) = Im(Kappa(2,1));
+   pars(76) = Re(Kappa(2,2));
+   pars(77) = Im(Kappa(2,2));
 
    return pars;
 }
@@ -129,7 +150,7 @@ void cSMHdCKM_soft_parameters::print(std::ostream& ostr) const
    ostr << "soft parameters at Q = " << get_scale() << ":\n";
    ostr << "mu2 = " << mu2 << '\n';
    ostr << "v = " << v << '\n';
-
+   ostr << "Kappa = " << Kappa << '\n';
 }
 
 void cSMHdCKM_soft_parameters::set(const Eigen::ArrayXd& pars)
@@ -138,6 +159,15 @@ void cSMHdCKM_soft_parameters::set(const Eigen::ArrayXd& pars)
 
    mu2 = pars(58);
    v = pars(59);
+   Kappa(0,0) = std::complex<double>(pars(60), pars(61));
+   Kappa(0,1) = std::complex<double>(pars(62), pars(63));
+   Kappa(0,2) = std::complex<double>(pars(64), pars(65));
+   Kappa(1,0) = std::complex<double>(pars(66), pars(67));
+   Kappa(1,1) = std::complex<double>(pars(68), pars(69));
+   Kappa(1,2) = std::complex<double>(pars(70), pars(71));
+   Kappa(2,0) = std::complex<double>(pars(72), pars(73));
+   Kappa(2,1) = std::complex<double>(pars(74), pars(75));
+   Kappa(2,2) = std::complex<double>(pars(76), pars(77));
 
 }
 

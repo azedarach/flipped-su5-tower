@@ -46,7 +46,7 @@ endif(ENABLE_SEMI_ANALYTIC_SOLVER)
 add_library(cSMHdCKMRHN ${cSMHdCKMRHN_SRC})
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(cSMHdCKMRHN PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(cSMHdCKMRHN PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_include_directories(cSMHdCKMRHN
@@ -78,7 +78,7 @@ if(ENABLE_LIBRARYLINK)
   add_library(LLcSMHdCKMRHN ${LLcSMHdCKMRHN_SRC})
 
   if(ENABLE_COMPILER_WARNINGS)
-    target_compile_options(LLcSMHdCKMRHN PRIVATE ${CXX_WARNING_FLAGS})
+    target_compile_options(LLcSMHdCKMRHN PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
   endif(ENABLE_COMPILER_WARNINGS)
 
   target_include_directories(LLcSMHdCKMRHN
@@ -112,7 +112,7 @@ add_executable(run_cSMHdCKMRHN
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(run_cSMHdCKMRHN PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(run_cSMHdCKMRHN PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(run_cSMHdCKMRHN
@@ -137,7 +137,7 @@ add_executable(run_cmd_line_cSMHdCKMRHN
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(run_cmd_line_cSMHdCKMRHN PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(run_cmd_line_cSMHdCKMRHN PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(run_cmd_line_cSMHdCKMRHN
@@ -162,7 +162,7 @@ add_executable(scan_cSMHdCKMRHN
 )
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(scan_cSMHdCKMRHN PRIVATE ${CXX_WARNING_FLAGS})
+  target_compile_options(scan_cSMHdCKMRHN PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
 target_link_libraries(scan_cSMHdCKMRHN

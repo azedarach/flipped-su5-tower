@@ -210,6 +210,8 @@ void cSMHdCKM_slha_io::set_model_parameters(const cSMHdCKM_slha<Model>& model)
       ;
       slha_io.set_block(block);
    }
+   slha_io.set_block("Kappa", ToMatrix(MODELPARAMETER(Kappa)), "Kappa", model.get_scale());
+   slha_io.set_block_imag("IMKappa", ToMatrix(MODELPARAMETER(Kappa)), "Kappa", model.get_scale());
    {
       std::ostringstream block;
       block << "Block HMIX Q= " << FORMAT_SCALE(model.get_scale()) << '\n'

@@ -35,7 +35,8 @@ namespace flexiblesusy {
 class cSMHdCKM_soft_parameters : public cSMHdCKM_susy_parameters {
 public:
    explicit cSMHdCKM_soft_parameters(const cSMHdCKM_input_parameters& input_ = cSMHdCKM_input_parameters());
-   cSMHdCKM_soft_parameters(const cSMHdCKM_susy_parameters& , double mu2_, double v_);
+   cSMHdCKM_soft_parameters(const cSMHdCKM_susy_parameters& , double mu2_, double v_,
+                            const Eigen::Matrix<std::complex<double>,3,3>& Kappa_);
    cSMHdCKM_soft_parameters(const cSMHdCKM_soft_parameters&) = default;
    cSMHdCKM_soft_parameters(cSMHdCKM_soft_parameters&&) = default;
    virtual ~cSMHdCKM_soft_parameters() = default;
@@ -53,18 +54,23 @@ public:
 
    void set_mu2(double mu2_) { mu2 = mu2_; }
    void set_v(double v_) { v = v_; }
+   void set_Kappa(const Eigen::Matrix<std::complex<double>,3,3>& Kappa_) { Kappa = Kappa_; }
+   void set_Kappa(int i, int k, const std::complex<double>& value) { Kappa(i,k) = value; }
 
    double get_mu2() const { return mu2; }
    double get_v() const { return v; }
+   const Eigen::Matrix<std::complex<double>,3,3>& get_Kappa() const { return Kappa; }
+   std::complex<double> get_Kappa(int i, int k) const { return Kappa(i,k); }
 
 
 protected:
    double mu2{};
    double v{};
+   Eigen::Matrix<std::complex<double>,3,3> Kappa{};
 
 
 private:
-   static const int numberOfParameters = 60;
+   static const int numberOfParameters = 78;
 
    struct Soft_traces {
       double traceYdAdjYd{};
@@ -86,6 +92,10 @@ private:
    double calc_beta_v_2_loop(const TRACE_STRUCT_TYPE&) const;
    double calc_beta_v_3_loop(const TRACE_STRUCT_TYPE&) const;
    double calc_beta_v_4_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_1_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_2_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_3_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_4_loop(const TRACE_STRUCT_TYPE&) const;
 
 };
 
