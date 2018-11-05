@@ -22,6 +22,7 @@
 #include "cSMHdCKMRHN_two_scale_model.hpp"
 #include "cSMHdCKMRHN_info.hpp"
 #include "wrappers.hpp"
+#include "linalg2.hpp"
 #include "logger.hpp"
 #include "ew_input.hpp"
 #include "error.hpp"
@@ -167,6 +168,12 @@ void cSMHdCKMRHN_high_scale_constraint<Two_scale>::apply()
    MODEL->set_Mv((MvInput).template cast<std::complex<double> >());
    MODEL->set_Yv((Yu.transpose()).template cast<std::complex<double> >());
 
+   Eigen::Matrix<std::complex<double>,3,3> Uu;
+   Eigen::Matrix<std::complex<double>,3,3> Vu;
+   Eigen::Array<double,3,1> Yd_diag;
+   fs_svd(MODELPARAMETER(Yd), Yd_diag, Uu, Vu);
+
+   MODEL->set_Yd(Vu.transpose() * Yd_diag.matrix().asDiagonal() * Vu);
 
    check_non_perturbative();
 }

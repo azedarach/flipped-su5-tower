@@ -23,6 +23,7 @@
 #include "cSMHdCKMRHN_info.hpp"
 #include "cSMHdCKMRHN_weinberg_angle.hpp"
 #include "wrappers.hpp"
+#include "linalg2.hpp"
 #include "logger.hpp"
 #include "error.hpp"
 #include "ew_input.hpp"
@@ -413,9 +414,16 @@ void cSMHdCKMRHN_low_scale_constraint<Two_scale>::calculate_Yd_DRbar()
 {
    check_model_ptr();
 
+   Eigen::Matrix<std::complex<double>,3,3> Uu;
+   Eigen::Matrix<std::complex<double>,3,3> Vu;
+   Eigen::Array<double,3,1> Yd_diag;
+   fs_svd(MODELPARAMETER(Yd), Yd_diag, Uu, Vu);
+
    const auto v = MODELPARAMETER(v);
-   MODEL->set_Yd(((1.4142135623730951*(downQuarksDRbar*CKM.adjoint()))/v).template
-       cast<std::complex<double> >());
+   const auto Yd_hat = ((1.4142135623730951*downQuarksDRbar)/v).template
+      cast<std::complex<double> >();
+
+   MODEL->set_Yd(Uu.transpose() * Yd_hat * CKM.adjoint());
 
 }
 
