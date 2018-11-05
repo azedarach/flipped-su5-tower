@@ -17,9 +17,9 @@
 
 #define MATHEMATICA_VERSION   11.2
 
-#define SARAH_VERSION         "4.13.0"
+#define SARAH_VERSION         "4.14.0"
 #define SARAH_MAJOR           4
-#define SARAH_MINOR           13
+#define SARAH_MINOR           14
 #define SARAH_PATCH           0
 
 #define BOOST_VERSION         @Boost_VERSION@
