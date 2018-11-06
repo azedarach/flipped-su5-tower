@@ -27,11 +27,20 @@ namespace flexiblesusy {
 
 Eigen::ArrayXd cSMHdCKM_input_parameters::get() const
 {
-   Eigen::ArrayXd pars(3);
+   Eigen::ArrayXd pars(12);
 
    pars(0) = LambdaIN;
    pars(1) = Qin;
    pars(2) = QEWSB;
+   pars(3) = UV_theta21;
+   pars(4) = UV_theta31;
+   pars(5) = UV_theta32;
+   pars(6) = UV_phi21;
+   pars(7) = UV_phi31;
+   pars(8) = UV_phi32;
+   pars(9) = UV_chi21;
+   pars(10) = UV_chi32;
+   pars(11) = UV_gamma;
 
    return pars;
 }
@@ -41,6 +50,15 @@ void cSMHdCKM_input_parameters::set(const Eigen::ArrayXd& pars)
    LambdaIN = pars(0);
    Qin = pars(1);
    QEWSB = pars(2);
+   UV_theta21 = pars(3);
+   UV_theta31 = pars(4);
+   UV_theta32 = pars(5);
+   UV_phi21 = pars(6);
+   UV_phi31 = pars(7);
+   UV_phi32 = pars(8);
+   UV_chi21 = pars(9);
+   UV_chi32 = pars(10);
+   UV_gamma = pars(11);
 
 }
 
@@ -49,6 +67,15 @@ std::ostream& operator<<(std::ostream& ostr, const cSMHdCKM_input_parameters& in
    ostr << "LambdaIN = " << INPUT(LambdaIN) << ", ";
    ostr << "Qin = " << INPUT(Qin) << ", ";
    ostr << "QEWSB = " << INPUT(QEWSB) << ", ";
+   ostr << "UV_theta21 = " << INPUT(UV_theta21) << ", ";
+   ostr << "UV_theta31 = " << INPUT(UV_theta31) << ", ";
+   ostr << "UV_theta32 = "<< INPUT(UV_theta32) << ", ";
+   ostr << "UV_phi21 = " << INPUT(UV_phi21) << ", ";
+   ostr << "UV_phi31 = " << INPUT(UV_phi31) << ", ";
+   ostr << "UV_phi32 = " << INPUT(UV_phi32) << ", ";
+   ostr << "UV_chi21 = " << INPUT(UV_chi21) << ", ";
+   ostr << "UV_chi32 = " << INPUT(UV_chi32) << ", ";
+   ostr << "UV_gamma = " << INPUT(UV_gamma) << ", ";
 
    return ostr;
 }

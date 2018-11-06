@@ -571,6 +571,7 @@ void CLASSNAME::copy_DRbar_masses_to_pole_masses()
    PHYSICAL(MVWp) = MVWp;
    PHYSICAL(MVP) = MVP;
    PHYSICAL(MVZ) = MVZ;
+   PHYSICAL(UV) = UV;
 
 }
 

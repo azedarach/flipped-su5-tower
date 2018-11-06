@@ -103,6 +103,8 @@ public:
    std::complex<double> get_Ue_pole_slha(int i, int k) const { return PHYSICAL_SLHA(Ue(i,k)); }
    const Eigen::Matrix<double,2,2>& get_ZZ_pole_slha() const { return PHYSICAL_SLHA(ZZ); }
    double get_ZZ_pole_slha(int i, int k) const { return PHYSICAL_SLHA(ZZ(i,k)); }
+   const Eigen::Matrix<std::complex<double>,3,3>& get_UV_pole_slha() const { return PHYSICAL_SLHA(UV); }
+   std::complex<double> get_UV_pole_slha(int i, int k) const { return PHYSICAL_SLHA(UV(i,k)); }
 
    const Eigen::Array<double,3,1>& get_Yu_slha() const { return Yu_slha; }
    double get_Yu_slha(int i) const { return Yu_slha(i); }
@@ -110,6 +112,8 @@ public:
    double get_Yd_slha(int i) const { return Yd_slha(i); }
    const Eigen::Array<double,3,1>& get_Ye_slha() const { return Ye_slha; }
    double get_Ye_slha(int i) const { return Ye_slha(i); }
+   const Eigen::Array<double,3,1>& get_Kappa_slha() const { return Kappa_slha; }
+   double get_Kappa_slha(int i) const { return Kappa_slha(i); }
 
 
 
@@ -125,6 +129,8 @@ public:
    std::complex<double> get_Ve_slha(int i, int k) const { return Ve_slha(i,k); }
    const Eigen::Matrix<std::complex<double>,3,3>& get_Ue_slha() const { return Ue_slha; }
    std::complex<double> get_Ue_slha(int i, int k) const { return Ue_slha(i,k); }
+   const Eigen::Matrix<std::complex<double>,3,3>& get_UV_slha() const { return UV_slha; }
+   std::complex<double> get_UV_slha(int i, int k) const { return UV_slha(i,k); }
 
 
 private:
@@ -135,6 +141,7 @@ private:
    Eigen::Array<double,3,1> Yu_slha{Eigen::Array<double,3,1>::Zero()};
    Eigen::Array<double,3,1> Yd_slha{Eigen::Array<double,3,1>::Zero()};
    Eigen::Array<double,3,1> Ye_slha{Eigen::Array<double,3,1>::Zero()};
+   Eigen::Array<double,3,1> Kappa_slha{Eigen::Array<double,3,1>::Zero()};
 
    Eigen::Matrix<std::complex<double>,3,3> Vd_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> Vu_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
@@ -142,7 +149,7 @@ private:
    Eigen::Matrix<std::complex<double>,3,3> Uu_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> Ve_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> Ue_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
-
+   Eigen::Matrix<std::complex<double>,3,3> UV_slha{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
 
 
 
@@ -216,7 +223,7 @@ void cSMHdCKM_slha<Model>::calculate_ckm_matrix()
 template <class Model>
 void cSMHdCKM_slha<Model>::calculate_pmns_matrix()
 {
-   pmns << 1, 0, 0, 0, 1, 0, 0, 0, 1;
+   pmns = Ve_slha * UV_slha.adjoint();
 
 }
 
@@ -229,6 +236,7 @@ void cSMHdCKM_slha<Model>::convert_yukawa_couplings_to_slha()
    fs_svd(MODELPARAMETER(Yu), Yu_slha, Uu_slha, Vu_slha);
    fs_svd(MODELPARAMETER(Yd), Yd_slha, Ud_slha, Vd_slha);
    fs_svd(MODELPARAMETER(Ye), Ye_slha, Ue_slha, Ve_slha);
+   fs_diagonalize_symmetric(MODELPARAMETER(Kappa), Kappa_slha, UV_slha);
 
 }
 

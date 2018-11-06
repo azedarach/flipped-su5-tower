@@ -21,6 +21,8 @@
 #ifndef cSMHdCKM_INPUT_PARAMETERS_H
 #define cSMHdCKM_INPUT_PARAMETERS_H
 
+#include "wrappers.hpp"
+
 #include <complex>
 #include <Eigen/Core>
 
@@ -30,6 +32,15 @@ struct cSMHdCKM_input_parameters {
    double LambdaIN{};
    double Qin{};
    double QEWSB{};
+   double UV_theta21{0.};
+   double UV_theta31{0.};
+   double UV_theta32{0.};
+   double UV_phi21{Pi};
+   double UV_phi31{0.};
+   double UV_phi32{0.};
+   double UV_chi21{0.};
+   double UV_chi32{0.};
+   double UV_gamma{0.};
 
 
    Eigen::ArrayXd get() const;
