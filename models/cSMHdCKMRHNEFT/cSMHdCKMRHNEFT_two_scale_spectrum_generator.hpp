@@ -5,8 +5,10 @@
 #include "cSMHdCKMRHNEFT_spectrum_generator_interface.hpp"
 
 #include "cSMHdCKMRHN_two_scale_model.hpp"
+#include "cSMHdCKMRHN_model_slha.hpp"
 
 #include "cSMHdCKM_two_scale_model.hpp"
+#include "cSMHdCKM_model_slha.hpp"
 
 namespace softsusy { class QedQcd; }
 

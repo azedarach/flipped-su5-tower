@@ -1,5 +1,6 @@
 set(cSMHdCKMRHNEFT_SRC
   cSMHdCKMRHNEFT_matching.cpp
+  cSMHdCKMRHNEFT_slha_io.cpp
   )
 
 if(ENABLE_TWO_SCALE_SOLVER)
@@ -42,6 +43,33 @@ target_link_libraries(cSMHdCKMRHNEFT
   LoopTools::LoopTools
   SQLite3::SQLite3
   Threads::Threads
+  )
+
+add_executable(run_cSMHdCKMRHNEFT
+  run_cSMHdCKMRHNEFT.cpp
+)
+
+if(ENABLE_COMPILER_WARNINGS)
+  target_compile_options(run_cSMHdCKMRHNEFT PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
+endif(ENABLE_COMPILER_WARNINGS)
+
+target_link_libraries(run_cSMHdCKMRHNEFT
+  PUBLIC
+  Boost::boost
+  Eigen3::Eigen
+  FlexibleSUSY::config
+  FlexibleSUSY::fflite
+  FlexibleSUSY::slhaea
+  FlexibleSUSY::flexisusy
+  FlexibleSUSY::model_specific::SM
+  cSMHdCKMRHNEFT
+  GSL::gsl
+  LAPACK::LAPACK
+  LoopTools::LoopTools
+  SQLite3::SQLite3
+  Threads::Threads
 )
 
 add_library(FlexibleSUSY::cSMHdCKMRHNEFT ALIAS cSMHdCKMRHNEFT)
+
+add_executable(FlexibleSUSY::run_cSMHdCKMRHNEFT ALIAS run_cSMHdCKMRHNEFT)

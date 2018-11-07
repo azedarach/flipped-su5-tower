@@ -32,7 +32,7 @@ public:
    std::tuple<cSMHdCKMRHN<T>,cSMHdCKM<T> > get_models() const {
       return std::make_tuple(model, eft);
    }
-   std::tuple<cSMHdCKMRHN_slha<cSMHdCKMRHN<T> >, cSMHdCKM_slha<cSMHdCKM_slha<T> > >
+   std::tuple<cSMHdCKMRHN_slha<cSMHdCKMRHN<T> >, cSMHdCKM_slha<cSMHdCKM<T> > >
    get_models_slha() const {
       return std::make_tuple(
          cSMHdCKMRHN_slha<cSMHdCKMRHN<T> >(model, settings.get(
