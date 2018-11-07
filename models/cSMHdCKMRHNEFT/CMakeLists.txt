@@ -1,10 +1,13 @@
-set(cSMHdCKMtower_SRC
+set(cSMHdCKMRHNEFT_SRC
+  cSMHdCKMRHNEFT_matching.cpp
   )
 
 if(ENABLE_TWO_SCALE_SOLVER)
-  set(cSMHdCKMtower_SRC
-    ${cSMHdCKMtower_SRC}
-    cSMHdCKM_cSMHdCKMRHN_two_scale_matching.cpp
+  set(cSMHdCKMRHNEFT_SRC
+    ${cSMHdCKMRHNEFT_SRC}
+    cSMHdCKMRHNEFT_two_scale_initial_guesser.cpp
+    cSMHdCKMRHNEFT_two_scale_matching.cpp
+    cSMHdCKMRHNEFT_two_scale_spectrum_generator.cpp
     )
 endif(ENABLE_TWO_SCALE_SOLVER)
 
@@ -12,18 +15,18 @@ if(ENABLE_SEMI_ANALYTIC_SOLVER)
 
 endif(ENABLE_SEMI_ANALYTIC_SOLVER)
 
-add_library(cSMHdCKMtower ${cSMHdCKMtower_SRC})
+add_library(cSMHdCKMRHNEFT ${cSMHdCKMRHNEFT_SRC})
 
 if(ENABLE_COMPILER_WARNINGS)
-  target_compile_options(cSMHdCKMtower PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
+  target_compile_options(cSMHdCKMRHNEFT PRIVATE $<$<COMPILE_LANGUAGE:CXX>:${CXX_WARNING_FLAGS}>)
 endif(ENABLE_COMPILER_WARNINGS)
 
-target_include_directories(cSMHdCKMtower
+target_include_directories(cSMHdCKMRHNEFT
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(cSMHdCKMtower
+target_link_libraries(cSMHdCKMRHNEFT
   PUBLIC
   Boost::boost
   Eigen3::Eigen
@@ -41,4 +44,4 @@ target_link_libraries(cSMHdCKMtower
   Threads::Threads
 )
 
-add_library(FlexibleSUSY::cSMHdCKMtower ALIAS cSMHdCKMtower)
+add_library(FlexibleSUSY::cSMHdCKMRHNEFT ALIAS cSMHdCKMRHNEFT)
