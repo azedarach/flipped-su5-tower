@@ -6,9 +6,12 @@ set(cSMHdCKMRHNEFT_SRC
 if(ENABLE_TWO_SCALE_SOLVER)
   set(cSMHdCKMRHNEFT_SRC
     ${cSMHdCKMRHNEFT_SRC}
+    cSMHdCKMRHNEFT_two_scale_high_scale_constraint.cpp
     cSMHdCKMRHNEFT_two_scale_initial_guesser.cpp
+    cSMHdCKMRHNEFT_two_scale_low_scale_constraint.cpp
     cSMHdCKMRHNEFT_two_scale_matching.cpp
     cSMHdCKMRHNEFT_two_scale_spectrum_generator.cpp
+    cSMHdCKMRHNEFT_two_scale_susy_scale_constraint.cpp
     )
 endif(ENABLE_TWO_SCALE_SOLVER)
 
