@@ -250,6 +250,18 @@ Eigen::Matrix<double,3,3> calculate_MFe_DRbar_tree_level(const cSMHdCKMRHN_mass_
    return mf;
 }
 
+Eigen::Matrix<double,3,3> calculate_MFv_DRbar_tree_level(const cSMHdCKMRHN_mass_eigenstates& model)
+{
+   Eigen::Matrix<double,3,3> mf = ZEROMATRIX(3,3);
+
+   mf(0,0) = model.get_MFv(0);
+   mf(1,1) = model.get_MFv(1);
+   mf(2,2) = model.get_MFv(2);
+
+
+   return mf;
+}
+
 double calculate_MFu_pole_1loop(
    int i,
    const cSMHdCKM_mass_eigenstates& eft_0l)
@@ -302,6 +314,25 @@ double calculate_MFe_pole_1loop(
    fs_svd(M_loop, MFe_pole);
 
    return MFe_pole(i);
+}
+
+double calculate_MFv_pole_1loop(
+   int i,
+   const cSMHdCKM_mass_eigenstates& eft_0l)
+{
+   const double p = eft_0l.get_MFv(i);
+   const auto self_energy_1  = Re(eft_0l.self_energy_Fv_1loop_1(p));
+   const auto self_energy_PL = Re(eft_0l.self_energy_Fv_1loop_PL(p));
+   const auto self_energy_PR = Re(eft_0l.self_energy_Fv_1loop_PR(p));
+   const auto M_tree = eft_0l.get_mass_matrix_Fv();
+   const auto delta_M = (-self_energy_PR * M_tree - M_tree * self_energy_PL
+                         - self_energy_1).eval();
+   const auto M_loop = (M_tree + 0.5 * (delta_M + delta_M.transpose())).eval();
+
+   Eigen::Array<double,3,1> MFv_pole;
+   fs_diagonalize_symmetric(M_loop, MFv_pole);
+
+   return MFv_pole(i);
 }
 
 double calculate_MFu_pole_1loop(
@@ -370,6 +401,29 @@ double calculate_MFe_pole_1loop(
    return m_pole;
 }
 
+double calculate_MFv_pole_1loop(
+   int i,
+   const cSMHdCKMRHN_mass_eigenstates& model_0l)
+{
+   double m_pole = 0.;
+
+   const double p = model_0l.get_MFv(i);
+   const auto self_energy_1  = Re(model_0l.self_energy_Fv_1loop_1(p));
+   const auto self_energy_PL = Re(model_0l.self_energy_Fv_1loop_PL(p));
+   const auto self_energy_PR = Re(model_0l.self_energy_Fv_1loop_PR(p));
+   const auto M_tree = model_0l.get_mass_matrix_Fv();
+   const auto delta_M = (-self_energy_PR * M_tree - M_tree * self_energy_PL
+                         - self_energy_1).eval();
+   const auto M_loop = (M_tree + 0.5 * (delta_M + delta_M.transpose())).eval();
+
+   Eigen::Array<double,6,1> M_pole;
+   fs_diagonalize_symmetric(M_loop, M_pole);
+
+   m_pole = M_pole(i);
+
+   return m_pole;
+}
+
 Eigen::Matrix<double,3,3> calculate_MFu_pole_1loop(const cSMHdCKM_mass_eigenstates& eft_0l)
 {
    Eigen::Matrix<double,3,1> M_pole;
@@ -419,6 +473,24 @@ Eigen::Matrix<double,3,3> calculate_MFe_pole_1loop(const cSMHdCKM_mass_eigenstat
    M_pole << calculate_MFe_pole_1loop(0, eft_0l),
              calculate_MFe_pole_1loop(1, eft_0l),
              calculate_MFe_pole_1loop(2, eft_0l);
+#endif
+
+   return M_pole.asDiagonal();
+}
+
+Eigen::Matrix<double,3,3> calculate_MFv_pole_1loop(const cSMHdCKM_mass_eigenstates& eft_0l)
+{
+   Eigen::Matrix<double,3,1> M_pole;
+
+#ifdef ENABLE_THREADS
+   auto M_0 = global_thread_pool().run_packaged_task([&eft_0l]{ return calculate_MFv_pole_1loop(0, eft_0l); });
+   auto M_1 = global_thread_pool().run_packaged_task([&eft_0l]{ return calculate_MFv_pole_1loop(1, eft_0l); });
+   auto M_2 = global_thread_pool().run_packaged_task([&eft_0l]{ return calculate_MFv_pole_1loop(2, eft_0l); });
+   M_pole << M_0.get(), M_1.get(), M_2.get();
+#else
+   M_pole << calculate_MFv_pole_1loop(0, eft_0l),
+             calculate_MFv_pole_1loop(1, eft_0l),
+             calculate_MFv_pole_1loop(2, eft_0l);
 #endif
 
    return M_pole.asDiagonal();
@@ -481,6 +553,25 @@ Eigen::Matrix<double,3,3> calculate_MFe_pole_1loop(
    return M_pole.asDiagonal();
 }
 
+Eigen::Matrix<double,3,3> calculate_MFv_pole_1loop(
+   const cSMHdCKMRHN_mass_eigenstates& model_0l)
+{
+   Eigen::Matrix<double,3,1> M_pole;
+
+#ifdef ENABLE_THREADS
+   auto M_0 = global_thread_pool().run_packaged_task([&model_0l]{ return calculate_MFv_pole_1loop(0, model_0l); });
+   auto M_1 = global_thread_pool().run_packaged_task([&model_0l]{ return calculate_MFv_pole_1loop(1, model_0l); });
+   auto M_2 = global_thread_pool().run_packaged_task([&model_0l]{ return calculate_MFv_pole_1loop(2, model_0l); });
+   M_pole << M_0.get(), M_1.get(), M_2.get();
+#else
+   M_pole << calculate_MFv_pole_1loop(0, model_0l),
+             calculate_MFv_pole_1loop(1, model_0l),
+             calculate_MFv_pole_1loop(2, model_0l);
+#endif
+
+   return M_pole.asDiagonal();
+}
+
 Eigen::Matrix<double,3,3> calculate_MFu_DRbar_1loop(
    const cSMHdCKM_mass_eigenstates& eft_0l,
    const cSMHdCKMRHN_mass_eigenstates& model_0l)
@@ -520,6 +611,21 @@ Eigen::Matrix<double,3,3> calculate_MFe_DRbar_1loop(
    const auto Mf_eft  = calculate_MFe_pole_1loop(eft_0l);
    const auto Mf_bsm = calculate_MFe_pole_1loop(model_0l);
    const auto mf_bsm = calculate_MFe_DRbar_tree_level(model_0l);
+
+   mf_eft = mf_bsm - Mf_bsm + Mf_eft;
+
+   return Abs(mf_eft);
+}
+
+Eigen::Matrix<double,3,3> calculate_MFv_DRbar_1loop(
+   const cSMHdCKM_mass_eigenstates& eft_0l,
+   const cSMHdCKMRHN_mass_eigenstates& model_0l)
+{
+   Eigen::Matrix<double,3,3> mf_eft = ZEROMATRIX(3,3);
+
+   const auto Mf_eft  = calculate_MFv_pole_1loop(eft_0l);
+   const auto Mf_bsm = calculate_MFv_pole_1loop(model_0l);
+   const auto mf_bsm = calculate_MFv_DRbar_tree_level(model_0l);
 
    mf_eft = mf_bsm - Mf_bsm + Mf_eft;
 
@@ -628,6 +734,7 @@ cSMHdCKMRHN_mass_eigenstates calculate_cSMHdCKMRHN_1loop(
    const Eigen::Matrix<double, 3, 3> upQuarksDRbar    = calculate_MFu_DRbar_1loop(eft_0l, model_0l);
    const Eigen::Matrix<double, 3, 3> downQuarksDRbar  = calculate_MFd_DRbar_1loop(eft_0l, model_0l);
    const Eigen::Matrix<double, 3, 3> downLeptonsDRbar = calculate_MFe_DRbar_1loop(eft_0l, model_0l);
+   const Eigen::Matrix<double, 3, 3> neutrinosDRbar   = calculate_MFv_DRbar_1loop(eft_0l, model_0l);
 
    // running cSMHdCKMRHN gauge couplings (via 1L matching)
    const double g1_1L = AbsSqrt(4. * Pi * alpha_em * (1. + delta_alpha_em) * mZ2_1L / mW2_1L) / cSMHdCKMRHN_info::normalization_g1;
@@ -648,9 +755,12 @@ cSMHdCKMRHN_mass_eigenstates calculate_cSMHdCKMRHN_1loop(
    }
 
    const auto v = MODELPARAMETER(v);
+   const auto Yv = MODELPARAMETER(Yv);
    model.set_Yu(((1.4142135623730951*upQuarksDRbar)/v).transpose());
    model.set_Yd(((1.4142135623730951*downQuarksDRbar)/v).transpose());
    model.set_Ye(((1.4142135623730951*downLeptonsDRbar)/v).transpose());
+
+   model.set_Mv(0.5 * Sqr(v) * (Yv * neutrinosDRbar.inverse() * Yv.transpose()));
 
 
    return model;
@@ -683,6 +793,7 @@ void match_low_to_high_scale_model_1loop(
    model.set_Ye(model_0l.get_Ye());
    model.set_Yu(model_0l.get_Yu());
 
+   model.set_Mv(model_0l.get_Mv());
 
    model.get_problems().add(model_0l.get_problems());
    model.get_problems().add(model_1l.get_problems());
@@ -733,16 +844,20 @@ void match_low_to_high_scale_model_tree_level(
    Eigen::Matrix<double, 3, 3> upQuarksDRbar    = ZEROMATRIX(3,3);
    Eigen::Matrix<double, 3, 3> downQuarksDRbar  = ZEROMATRIX(3,3);
    Eigen::Matrix<double, 3, 3> downLeptonsDRbar = ZEROMATRIX(3,3);
+   Eigen::Matrix<double, 3, 3> neutrinosDRbar   = ZEROMATRIX(3,3);
 
    upQuarksDRbar.diagonal()    = eft.get_MFu();
    downQuarksDRbar.diagonal()  = eft.get_MFd();
    downLeptonsDRbar.diagonal() = eft.get_MFe();
+   neutrinosDRbar.diagonal()   = eft.get_MFv();
 
    const auto v = MODELPARAMETER(v);
+   const auto Yv = MODELPARAMETER(Yv);
    model.set_Yu(((1.4142135623730951*upQuarksDRbar)/v).transpose());
    model.set_Yd(((1.4142135623730951*downQuarksDRbar)/v).transpose());
    model.set_Ye(((1.4142135623730951*downLeptonsDRbar)/v).transpose());
 
+   model.set_Mv(0.5 * Sqr(v) * (Yv * neutrinosDRbar.inverse() * Yv.transpose()));
 
    model.calculate_DRbar_masses();
 }
