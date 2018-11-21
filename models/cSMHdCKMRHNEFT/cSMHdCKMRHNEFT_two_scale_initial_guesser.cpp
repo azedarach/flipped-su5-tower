@@ -9,6 +9,8 @@
 #include "wrappers.hpp"
 
 #include <Eigen/Core>
+// @todo remove
+#include <iostream>
 
 namespace flexiblesusy {
 
@@ -23,9 +25,9 @@ cSMHdCKMRHNEFT_initial_guesser<Two_scale>::cSMHdCKMRHNEFT_initial_guesser(
    cSMHdCKMRHN<Two_scale>* model_,
    cSMHdCKM<Two_scale>* eft_,
    const softsusy::QedQcd& qedqcd_,
-   const cSMHdCKM_low_scale_constraint<Two_scale>& low_constraint_,
-   const cSMHdCKMRHN_susy_scale_constraint<Two_scale>& susy_constraint_,
-   const cSMHdCKMRHN_high_scale_constraint<Two_scale>& high_constraint_
+   const cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>& low_constraint_,
+   const cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>& susy_constraint_,
+   const cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>& high_constraint_
 )
    : Initial_guesser()
    , model(model_)
@@ -86,6 +88,9 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_eft_parameters()
       leAtMt.displayMass(softsusy::mMuon) :
       leAtMt.displayPoleMmuon();
    mtau_guess = leAtMt.displayMass(softsusy::mTau);
+   mv1_guess = leAtMt.displayNeutrinoPoleMass(1);
+   mv2_guess = leAtMt.displayNeutrinoPoleMass(2);
+   mv3_guess = leAtMt.displayNeutrinoPoleMass(3);
 
    calculate_running_SM_masses();
 
@@ -101,6 +106,7 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_eft_parameters()
    eft->set_Yu(ZEROMATRIX(3,3));
    eft->set_Yd(ZEROMATRIX(3,3));
    eft->set_Ye(ZEROMATRIX(3,3));
+   eft->set_Kappa(ZEROMATRIX(3,3));
 
    eft->set_Yu(0, 0, Sqrt(2.)* mu_guess/ eft->get_v());
    eft->set_Yu(1, 1, Sqrt(2.)* mc_guess/ eft->get_v());
@@ -114,8 +120,29 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_eft_parameters()
    eft->set_Ye(1, 1, Sqrt(2.)* mm_guess/ eft->get_v());
    eft->set_Ye(2, 2, Sqrt(2.)* mtau_guess/ eft->get_v());
 
+   eft->set_Kappa(0, 0, 4. * mv1_guess / Sqr(eft->get_v()));
+   eft->set_Kappa(1, 1, 4. * mv2_guess / Sqr(eft->get_v()));
+   eft->set_Kappa(2, 2, 4. * mv3_guess / Sqr(eft->get_v()));
+
    eft->set_Lambdax(0.12604);
    eft->solve_ewsb_tree_level();
+
+   std::cout << "end of guess eft parameters:\n";
+   eft->print(std::cout);
+   std::cout << "check tree-level masses:\n";
+   eft->calculate_MFu();
+   eft->calculate_MFd();
+   eft->calculate_MFe();
+   eft->calculate_MFv();
+
+   std::cout << "eft MFu = " << eft->get_MFu().transpose() << '\n';
+   std::cout << "expected = " << mu_guess << ", " << mc_guess << ", " << mt_guess << '\n';
+   std::cout << "eft MFd = " << eft->get_MFd().transpose() << '\n';
+   std::cout << "expected = " << md_guess << ", " << ms_guess << ", " << mb_guess << '\n';
+   std::cout << "eft MFe = " << eft->get_MFe().transpose() << '\n';
+   std::cout << "expected = " << me_guess << ", " << mm_guess << ", " << mtau_guess << '\n';
+   std::cout << "eft MFv = " << eft->get_MFv().transpose() << '\n';
+   std::cout << "expected = " << mv1_guess << ", " << mv2_guess << ", " << mv3_guess << '\n';
 }
 
 void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::calculate_DRbar_yukawa_couplings()
@@ -142,6 +169,11 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::calculate_running_SM_masses()
    downLeptonsDRbar(0,0) = me_guess;
    downLeptonsDRbar(1,1) = mm_guess;
    downLeptonsDRbar(2,2) = mtau_guess;
+
+   neutrinosDRbar.setZero();
+   neutrinosDRbar(0,0) = mv1_guess;
+   neutrinosDRbar(1,1) = mv2_guess;
+   neutrinosDRbar(2,2) = mv3_guess;
 }
 
 /**
@@ -213,23 +245,37 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
    calculate_Yu_DRbar();
    calculate_Yd_DRbar();
    calculate_Ye_DRbar();
-
+   MODEL->set_Yv(eft->get_Yu().transpose());
    }
+
+   std::cout << "after apply susy-scale first guess:\n";
+   model->print(std::cout);
 
    eft->run_to(susy_scale_guess, running_precision);
    eft->calculate_DRbar_masses();
 
+   std::cout << "after running EFT to susy scale guess:\n";
+   eft->print(std::cout);
+
    //get gauge and Yukawa couplings from effective theory
+   std::cout << "performing tree-level matching\n";
    cSMHdCKMRHNEFT_matching_up<Two_scale> matching_up;
    matching_up.set_models(eft, model);
    matching_up.set_scale(scale_getter);
    matching_up.match_tree_level();
+
+   std::cout << "after tree-level matching:\n";
+   eft->print(std::cout);
+   model->print(std::cout);
 
    model->run_to(susy_scale_guess, running_precision);
 
    // apply susy-scale constraint
    susy_constraint.set_model(model);
    susy_constraint.apply();
+
+   std::cout << "after applying susy scale constraint:\n";
+   model->print(std::cout);
 
    // run to high scale
    model->run_to(high_scale_guess, running_precision);
@@ -244,6 +290,9 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
    high_constraint.set_model(model);
    high_constraint.apply();
 
+   std::cout << "after applying high scale constraint:\n";
+   model->print(std::cout);
+
    model->run_to(susy_scale_guess, running_precision);
 
    // apply EWSB constraint
@@ -251,6 +300,9 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
 
    // calculate tree-level spectrum
    model->calculate_DRbar_masses();
+
+   std::cout << "end of guess model parameters:\n";
+   model->print(std::cout);
 }
 
 } // namespace flexiblesusy

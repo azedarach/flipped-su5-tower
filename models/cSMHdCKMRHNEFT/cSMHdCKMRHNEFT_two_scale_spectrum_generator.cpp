@@ -2,15 +2,16 @@
 
 #include "cSMHdCKM_input_parameters.hpp"
 #include "cSMHdCKM_two_scale_convergence_tester.hpp"
-#include "cSMHdCKM_two_scale_low_scale_constraint.hpp"
 #include "cSMHdCKM_two_scale_model.hpp"
 
+#include "cSMHdCKMRHNEFT_two_scale_low_scale_constraint.hpp"
 #include "cSMHdCKMRHNEFT_two_scale_matching.hpp"
+#include "cSMHdCKMRHNEFT_two_scale_susy_scale_constraint.hpp"
 
 #include "cSMHdCKMRHN_input_parameters.hpp"
 #include "cSMHdCKMRHN_two_scale_convergence_tester.hpp"
 #include "cSMHdCKMRHN_two_scale_ewsb_solver.hpp"
-#include "cSMHdCKMRHN_two_scale_high_scale_constraint.hpp"
+#include "cSMHdCKMRHNEFT_two_scale_high_scale_constraint.hpp"
 #include "cSMHdCKMRHN_two_scale_model.hpp"
 
 #include "cSMHdCKMRHNEFT_two_scale_initial_guesser.hpp"
@@ -100,9 +101,9 @@ void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
    model.set_ewsb_solver(
       std::make_shared<cSMHdCKMRHN_ewsb_solver<Two_scale> >(ewsb_solver));
 
-   cSMHdCKMRHN_high_scale_constraint<Two_scale> high_scale_constraint(&model);
-   cSMHdCKMRHN_susy_scale_constraint<Two_scale> susy_scale_constraint(&model, qedqcd);
-   cSMHdCKM_low_scale_constraint<Two_scale> low_scale_constraint(&eft, qedqcd);
+   cSMHdCKMRHNEFT_high_scale_constraint<Two_scale> high_scale_constraint(&model);
+   cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale> susy_scale_constraint(&model, qedqcd);
+   cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_scale_constraint(&eft, qedqcd);
 
    // note: to avoid large logarithms the downwards matching loop order
    // is used for both matching conditions

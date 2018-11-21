@@ -2,9 +2,9 @@
 #define cSMHdCKMRHNEFT_TWO_SCALE_INITIAL_GUESSER_H
 
 #include "cSMHdCKMRHN_initial_guesser.hpp"
-#include "cSMHdCKMRHN_two_scale_susy_scale_constraint.hpp"
-#include "cSMHdCKMRHN_two_scale_high_scale_constraint.hpp"
-#include "cSMHdCKM_two_scale_low_scale_constraint.hpp"
+#include "cSMHdCKMRHNEFT_two_scale_susy_scale_constraint.hpp"
+#include "cSMHdCKMRHNEFT_two_scale_high_scale_constraint.hpp"
+#include "cSMHdCKMRHNEFT_two_scale_low_scale_constraint.hpp"
 #include "initial_guesser.hpp"
 #include "lowe.h"
 
@@ -35,9 +35,9 @@ public:
    cSMHdCKMRHNEFT_initial_guesser(cSMHdCKMRHN<Two_scale>*,
                                   cSMHdCKM<Two_scale>*,
                                   const softsusy::QedQcd&,
-                                  const cSMHdCKM_low_scale_constraint<Two_scale>&,
-                                  const cSMHdCKMRHN_susy_scale_constraint<Two_scale>&,
-                                  const cSMHdCKMRHN_high_scale_constraint<Two_scale>&);
+                                  const cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>&,
+                                  const cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>&,
+                                  const cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>&);
    virtual ~cSMHdCKMRHNEFT_initial_guesser();
    virtual void guess(); ///< initial guess
 
@@ -56,13 +56,17 @@ private:
    double me_guess{0.}; ///< guessed DR-bar mass of electron
    double mm_guess{0.}; ///< guessed DR-bar mass of muon
    double mtau_guess{0.}; ///< guessed DR-bar mass of tau
+   double mv1_guess{0.};  ///< guessed DR-bar mass of lightest neutrino
+   double mv2_guess{0.};  ///< guessed DR-bar mass of second-lightest neutrino
+   double mv3_guess{0.};  ///< guessed DR-bar mass of heaviest neutrino
    double running_precision{1.0e-3}; ///< Runge-Kutta RG running precision
-   cSMHdCKM_low_scale_constraint<Two_scale> low_constraint{};
-   cSMHdCKMRHN_susy_scale_constraint<Two_scale> susy_constraint{};
-   cSMHdCKMRHN_high_scale_constraint<Two_scale> high_constraint{};
+   cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_constraint{};
+   cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale> susy_constraint{};
+   cSMHdCKMRHNEFT_high_scale_constraint<Two_scale> high_constraint{};
    Eigen::Matrix<std::complex<double>,3,3> upQuarksDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> downQuarksDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> downLeptonsDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
+   Eigen::Matrix<std::complex<double>,3,3> neutrinosDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
 
    void guess_eft_parameters();
    void guess_model_parameters();
@@ -70,6 +74,7 @@ private:
    void calculate_Yu_DRbar();
    void calculate_Yd_DRbar();
    void calculate_Ye_DRbar();
+   void calculate_Kappa_DRbar();
    void calculate_running_SM_masses();
 };
 
