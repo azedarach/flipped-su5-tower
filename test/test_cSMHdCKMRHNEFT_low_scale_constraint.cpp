@@ -96,6 +96,8 @@ BOOST_AUTO_TEST_CASE( test_quark_mixing )
 
    low_scale_constraint.apply();
 
+   model.calculate_DRbar_masses();
+
    BOOST_CHECK(is_diagonal(model.get_Yu()));
 
    Eigen::Matrix<std::complex<double>,3,3> Vu(model.get_Vu());
