@@ -4,6 +4,7 @@
 #include "cSMHdCKMRHN_info.hpp"
 
 #include "config.h"
+#include "error.hpp"
 #include "global_thread_pool.hpp"
 #include "linalg2.hpp"
 #include "loop_corrections.hpp"
@@ -885,7 +886,8 @@ void match_low_to_high_scale_model(
       return;
    }
 
-   match_low_to_high_scale_model_1loop(model, eft);
+   throw SetupError("only tree-level matching is currently allowed");
+   // match_low_to_high_scale_model_1loop(model, eft);
 }
 
 /**
@@ -905,7 +907,8 @@ void match_high_to_low_scale_model(
       return;
    }
 
-   match_high_to_low_scale_model_1loop(eft, model);
+   throw SetupError("only tree-level matching is currently allowed");
+   // match_high_to_low_scale_model_1loop(eft, model);
 }
 
 } // namespace cSMHdCKMRHNEFT_matching
