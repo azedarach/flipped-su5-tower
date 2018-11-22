@@ -21,8 +21,7 @@
 
 namespace flexiblesusy {
 
-struct cSMHdCKM_input_parameters;
-struct cSMHdCKMRHN_input_parameters;
+struct cSMHdCKMRHNEFT_input_parameters;
 
 template <class T>
 class cSMHdCKMRHNEFT_spectrum_generator_interface {
@@ -62,8 +61,7 @@ public:
    void set_parameter_output_scale(double s) { parameter_output_scale = s; }
    void set_settings(const Spectrum_generator_settings&);
 
-   void run(const softsusy::QedQcd&, const cSMHdCKM_input_parameters&,
-            const cSMHdCKMRHN_input_parameters&);
+   void run(const softsusy::QedQcd&, const cSMHdCKMRHNEFT_input_parameters&);
    void write_running_couplings(const std::string& filename, double, double) const;
    void write_spectrum(const std::string& filename = "cSMHdCKMRHNEFT_spectrum.dat") const;
 
@@ -77,8 +75,7 @@ protected:
 
    void translate_exception_to_problem(cSMHdCKMRHN<T>&);
    virtual void run_except(
-      const softsusy::QedQcd&, const cSMHdCKM_input_parameters&,
-      const cSMHdCKMRHN_input_parameters&) = 0;
+      const softsusy::QedQcd&, const cSMHdCKMRHNEFT_input_parameters&) = 0;
 };
 
 /**
@@ -114,14 +111,13 @@ void cSMHdCKMRHNEFT_spectrum_generator_interface<T>::set_settings(
  */
 template <class T>
 void cSMHdCKMRHNEFT_spectrum_generator_interface<T>::run(
-   const softsusy::QedQcd& qedqcd_, const cSMHdCKM_input_parameters& eft_input,
-   const cSMHdCKMRHN_input_parameters& model_input)
+   const softsusy::QedQcd& qedqcd_, const cSMHdCKMRHNEFT_input_parameters& input)
 {
    softsusy::QedQcd qedqcd = qedqcd_;
 
    try {
       qedqcd.to(qedqcd.displayPoleMZ());
-      this->run_except(qedqcd, eft_input, model_input);
+      this->run_except(qedqcd, input);
    } catch (...) {
       this->translate_exception_to_problem(model);
    }

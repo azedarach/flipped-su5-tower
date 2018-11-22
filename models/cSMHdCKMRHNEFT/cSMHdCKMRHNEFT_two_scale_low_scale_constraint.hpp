@@ -22,7 +22,7 @@
 #define cSMHdCKMRHNEFT_TWO_SCALE_LOW_SCALE_CONSTRAINT_H
 
 #include "cSMHdCKMRHNEFT_low_scale_constraint.hpp"
-#include "cSMHdCKM_input_parameters.hpp"
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 #include "single_scale_constraint.hpp"
 #include "lowe.h"
 #include <Eigen/Core>
@@ -38,7 +38,8 @@ template<>
 class cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> : public Single_scale_constraint {
 public:
    cSMHdCKMRHNEFT_low_scale_constraint() = default;
-   cSMHdCKMRHNEFT_low_scale_constraint(cSMHdCKM<Two_scale>*, const softsusy::QedQcd&);
+   cSMHdCKMRHNEFT_low_scale_constraint(cSMHdCKM<Two_scale>*, const softsusy::QedQcd&,
+                                       const cSMHdCKMRHNEFT_input_parameters&);
    virtual ~cSMHdCKMRHNEFT_low_scale_constraint() = default;
    virtual void apply() override;
    virtual double get_scale() const override;
@@ -58,6 +59,7 @@ private:
    double initial_scale_guess{0.};
    cSMHdCKM<Two_scale>* model{nullptr};
    softsusy::QedQcd qedqcd{};
+   cSMHdCKMRHNEFT_input_parameters input{};
    Eigen::Matrix<std::complex<double>,3,3> ckm{Eigen::Matrix<std::complex<double>,3,3>::Identity()};
    Eigen::Matrix<std::complex<double>,3,3> pmns{Eigen::Matrix<std::complex<double>,3,3>::Identity()};
    Eigen::Matrix<std::complex<double>,3,3> upQuarksDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};

@@ -22,7 +22,7 @@
 #define cSMHdCKMRHNEFT_TWO_SCALE_SUSY_SCALE_CONSTRAINT_H
 
 #include "cSMHdCKMRHNEFT_susy_scale_constraint.hpp"
-#include "cSMHdCKMRHN_input_parameters.hpp"
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 #include "single_scale_constraint.hpp"
 #include "lowe.h"
 
@@ -42,7 +42,8 @@ template<>
 class cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale> : public Single_scale_constraint {
 public:
    cSMHdCKMRHNEFT_susy_scale_constraint() = default;
-   cSMHdCKMRHNEFT_susy_scale_constraint(cSMHdCKMRHN<Two_scale>*, const softsusy::QedQcd&);
+   cSMHdCKMRHNEFT_susy_scale_constraint(cSMHdCKMRHN<Two_scale>*, const softsusy::QedQcd&,
+      const cSMHdCKMRHNEFT_input_parameters&);
    virtual ~cSMHdCKMRHNEFT_susy_scale_constraint() = default;
    virtual void apply() override;
    virtual double get_scale() const override;
@@ -51,7 +52,7 @@ public:
 
    void clear();
    double get_initial_scale_guess() const;
-   const cSMHdCKMRHN_input_parameters& get_input_parameters() const;
+   const cSMHdCKMRHNEFT_input_parameters& get_input_parameters() const;
    cSMHdCKMRHN<Two_scale>* get_model() const;
    void initialize();
    const softsusy::QedQcd& get_sm_parameters() const;
@@ -65,6 +66,7 @@ private:
    double initial_scale_guess{0.};
    cSMHdCKMRHN<Two_scale>* model{nullptr};
    softsusy::QedQcd qedqcd{};
+   cSMHdCKMRHNEFT_input_parameters input{};
 
    double calculate_initial_scale_guess() const;
    void calculate_seesaw_Mv(const Eigen::Matrix<std::complex<double>,3,3>&,

@@ -44,7 +44,7 @@ namespace flexiblesusy {
 
 #define DERIVEDPARAMETER(p) model->p()
 #define EXTRAPARAMETER(p) model->get_##p()
-#define INPUTPARAMETER(p) model->get_input().p
+#define INPUTPARAMETER(p) input.p
 #define MODELPARAMETER(p) model->get_##p()
 #define PHASE(p) model->get_##p()
 #define BETAPARAMETER(p) beta_functions.get_##p()
@@ -73,9 +73,11 @@ namespace flexiblesusy {
 #define CALCULATE_DRBAR_MASSES() model->calculate_DRbar_masses()
 
 cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::cSMHdCKMRHNEFT_low_scale_constraint(
-   cSMHdCKM<Two_scale>* model_, const softsusy::QedQcd& qedqcd_)
+   cSMHdCKM<Two_scale>* model_, const softsusy::QedQcd& qedqcd_,
+   const cSMHdCKMRHNEFT_input_parameters& input_)
    : model(model_)
    , qedqcd(qedqcd_)
+   , input(input_)
 {
    initialize();
 }
@@ -187,6 +189,7 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::clear()
    initial_scale_guess = 0.;
    model = nullptr;
    qedqcd = softsusy::QedQcd();
+   input = cSMHdCKMRHNEFT_input_parameters();
    ckm.setIdentity();
    pmns.setIdentity();
    upQuarksDRbar.setZero();

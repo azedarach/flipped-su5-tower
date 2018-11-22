@@ -32,11 +32,14 @@
 
 #include <cmath>
 
+// @todo remove
+#include <iostream>
+
 namespace flexiblesusy {
 
 #define DERIVEDPARAMETER(p) model->p()
 #define EXTRAPARAMETER(p) model->get_##p()
-#define INPUTPARAMETER(p) model->get_input().p
+#define INPUTPARAMETER(p) input.p
 #define MODELPARAMETER(p) model->get_##p()
 #define PHASE(p) model->get_##p()
 #define BETAPARAMETER(p) beta_functions.get_##p()
@@ -53,9 +56,11 @@ namespace flexiblesusy {
 #define MODELCLASSNAME cSMHdCKMRHN<Two_scale>
 
 cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::cSMHdCKMRHNEFT_susy_scale_constraint(
-   cSMHdCKMRHN<Two_scale>* model_, const softsusy::QedQcd& qedqcd_)
+   cSMHdCKMRHN<Two_scale>* model_, const softsusy::QedQcd& qedqcd_,
+   const cSMHdCKMRHNEFT_input_parameters& input_)
    : model(model_)
    , qedqcd(qedqcd_)
+   , input(input_)
 {
    initialize();
 }
@@ -86,11 +91,9 @@ double cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::get_initial_scale_guess(
    return initial_scale_guess;
 }
 
-const cSMHdCKMRHN_input_parameters& cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::get_input_parameters() const
+const cSMHdCKMRHNEFT_input_parameters& cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::get_input_parameters() const
 {
-   check_model_ptr();
-
-   return model->get_input();
+   return input;
 }
 
 cSMHdCKMRHN<Two_scale>* cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::get_model() const
@@ -120,6 +123,7 @@ void cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::clear()
    initial_scale_guess = 0.;
    model = nullptr;
    qedqcd = softsusy::QedQcd();
+   input = cSMHdCKMRHNEFT_input_parameters();
 }
 
 void cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::initialize()

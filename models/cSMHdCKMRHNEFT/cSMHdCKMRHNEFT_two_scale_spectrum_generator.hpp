@@ -32,8 +32,8 @@ public:
 
 protected:
    virtual void run_except(
-      const softsusy::QedQcd&, const cSMHdCKM_input_parameters&,
-      const cSMHdCKMRHN_input_parameters&) override;
+      const softsusy::QedQcd&,
+      const cSMHdCKMRHNEFT_input_parameters&) override;
 
 private:
    double high_scale{0.};

@@ -45,7 +45,7 @@ namespace flexiblesusy {
 
 #define DERIVEDPARAMETER(p) model->p()
 #define EXTRAPARAMETER(p) model->get_##p()
-#define INPUTPARAMETER(p) model->get_input().p
+#define INPUTPARAMETER(p) input.p
 #define MODELPARAMETER(p) model->get_##p()
 #define PHASE(p) model->get_##p()
 #define BETAPARAMETER(p) beta_functions.get_##p()
@@ -145,8 +145,9 @@ namespace flexiblesusy {
 #endif
 
 cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::cSMHdCKMRHNEFT_high_scale_constraint(
-   cSMHdCKMRHN<Two_scale>* model_)
+   cSMHdCKMRHN<Two_scale>* model_, const cSMHdCKMRHNEFT_input_parameters& input_)
    : model(model_)
+   , input(input_)
 {
    initialize();
 }
@@ -728,9 +729,9 @@ double cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::get_initial_scale_guess(
    return initial_scale_guess;
 }
 
-const cSMHdCKMRHN_input_parameters& cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::get_input_parameters() const
+const cSMHdCKMRHNEFT_input_parameters& cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::get_input_parameters() const
 {
-   return model->get_input();
+   return input;
 }
 
 cSMHdCKMRHN<Two_scale>* cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::get_model() const
@@ -753,6 +754,7 @@ void cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::clear()
    scale = 0.;
    initial_scale_guess = 0.;
    model = nullptr;
+   input = cSMHdCKMRHNEFT_input_parameters();
 }
 
 void cSMHdCKMRHNEFT_high_scale_constraint<Two_scale>::initialize()

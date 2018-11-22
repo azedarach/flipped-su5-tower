@@ -1,12 +1,10 @@
 
 #include "config.h"
 
-#include "cSMHdCKM_input_parameters.hpp"
-
-#include "cSMHdCKMRHN_input_parameters.hpp"
 #include "cSMHdCKMRHN_observables.hpp"
 #include "cSMHdCKMRHN_utilities.hpp"
 
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 #include "cSMHdCKMRHNEFT_slha_io.hpp"
 #include "cSMHdCKMRHNEFT_spectrum_generator.hpp"
 
@@ -45,12 +43,11 @@ int run_solver(flexiblesusy::cSMHdCKMRHNEFT_slha_io& slha_io,
 
    Physical_input physical_input; // extra non-SLHA physical input
    softsusy::QedQcd qedqcd;
-   cSMHdCKM_input_parameters eft_input;
-   cSMHdCKMRHN_input_parameters model_input;
+   cSMHdCKMRHNEFT_input_parameters input;
 
    try {
       slha_io.fill(qedqcd);
-      slha_io.fill(eft_input, model_input);
+      slha_io.fill(input);
       slha_io.fill(physical_input);
    } catch (const Error& error) {
       ERROR(error.what());
@@ -62,7 +59,7 @@ int run_solver(flexiblesusy::cSMHdCKMRHNEFT_slha_io& slha_io,
    spectrum_generator.set_parameter_output_scale(
       slha_io.get_parameter_output_scale());
 
-   spectrum_generator.run(qedqcd, eft_input, model_input);
+   spectrum_generator.run(qedqcd, input);
 
    auto models = spectrum_generator.get_models_slha();
    const auto& problems = spectrum_generator.get_problems();
@@ -82,7 +79,7 @@ int run_solver(flexiblesusy::cSMHdCKMRHNEFT_slha_io& slha_io,
    // SLHA output
    if (!slha_output_file.empty()) {
       slha_io.set_spinfo(problems);
-      slha_io.set_input(eft_input, model_input);
+      slha_io.set_input(input);
       if (show_result) {
          slha_io.set_print_imaginary_parts_of_majorana_mixings(
             spectrum_generator_settings.get(

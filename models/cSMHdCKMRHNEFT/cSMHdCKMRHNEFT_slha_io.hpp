@@ -38,8 +38,7 @@
 
 namespace flexiblesusy {
 
-struct cSMHdCKM_input_parameters;
-struct cSMHdCKMRHN_input_parameters;
+struct cSMHdCKMRHNEFT_input_parameters;
 class Spectrum_generator_settings;
 
 template <class T>
@@ -60,7 +59,7 @@ public:
    void clear();
 
    void fill(softsusy::QedQcd& qedqcd) const { slha_io.fill(qedqcd); }
-   void fill(cSMHdCKM_input_parameters&, cSMHdCKMRHN_input_parameters&) const;
+   void fill(cSMHdCKMRHNEFT_input_parameters&) const;
    void fill(cSMHdCKMRHN_mass_eigenstates&) const;
    template <class Model> void fill(cSMHdCKMRHN_slha<Model>&) const;
    void fill(Physical_input&) const;
@@ -73,7 +72,7 @@ public:
    void set_block(const std::string& str, SLHA_io::Position position = SLHA_io::back) { slha_io.set_block(str, position); }
    void set_blocks(const std::vector<std::string>& vec, SLHA_io::Position position = SLHA_io::back) { slha_io.set_blocks(vec, position); }
    template <class Model> void set_extra(const cSMHdCKMRHN_slha<Model>&, const cSMHdCKMRHNEFT_scales&, const cSMHdCKMRHN_observables&);
-   void set_input(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&);
+   void set_input(const cSMHdCKMRHNEFT_input_parameters&);
    void set_modsel(const SLHA_io::Modsel&);
    void set_physical_input(const Physical_input&);
    void set_settings(const Spectrum_generator_settings&);
@@ -92,25 +91,29 @@ public:
    void write_to_file(const std::string& file_name) const { slha_io.write_to_file(file_name); }
    void write_to_stream(std::ostream& ostr = std::cout) const { slha_io.write_to_stream(ostr); }
 
-   static void fill_minpar_tuple(cSMHdCKM_input_parameters&, cSMHdCKMRHN_input_parameters&, int, double);
-   static void fill_extpar_tuple(cSMHdCKM_input_parameters&, cSMHdCKMRHN_input_parameters&, int, double);
-   static void fill_imminpar_tuple(cSMHdCKM_input_parameters&, cSMHdCKMRHN_input_parameters&, int, double);
-   static void fill_imextpar_tuple(cSMHdCKM_input_parameters&, cSMHdCKMRHN_input_parameters&, int, double);
+   static void fill_minpar_tuple(cSMHdCKMRHNEFT_input_parameters&, int, double);
+   static void fill_extpar_tuple(cSMHdCKMRHNEFT_input_parameters&, int, double);
+   static void fill_imminpar_tuple(cSMHdCKMRHNEFT_input_parameters&, int, double);
+   static void fill_imextpar_tuple(cSMHdCKMRHNEFT_input_parameters&, int, double);
 
    template <class EFT, class Model>
-   static void fill_slhaea(SLHAea::Coll&, const cSMHdCKM_slha<EFT>&, const cSMHdCKMRHN_slha<Model>&, const softsusy::QedQcd&, const cSMHdCKMRHNEFT_scales&, const cSMHdCKMRHN_observables&);
+   static void fill_slhaea(SLHAea::Coll&, const cSMHdCKM_slha<EFT>&, const cSMHdCKMRHN_slha<Model>&,
+                           const softsusy::QedQcd&, const cSMHdCKMRHNEFT_input_parameters&,
+                           const cSMHdCKMRHNEFT_scales&, const cSMHdCKMRHN_observables&);
 
    template <class EFT, class Model>
-   static SLHAea::Coll fill_slhaea(const cSMHdCKM_slha<EFT>&, const cSMHdCKMRHN_slha<Model>&, const softsusy::QedQcd&, const cSMHdCKMRHNEFT_scales&, const cSMHdCKMRHN_observables&);
+   static SLHAea::Coll fill_slhaea(const cSMHdCKM_slha<EFT>&, const cSMHdCKMRHN_slha<Model>&,
+                                   const softsusy::QedQcd&, const cSMHdCKMRHNEFT_input_parameters&,
+                                   const cSMHdCKMRHNEFT_scales&, const cSMHdCKMRHN_observables&);
 
 private:
    SLHA_io slha_io; ///< SLHA io class
    bool print_imaginary_parts_of_majorana_mixings;
 
-   void set_extpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&);
-   void set_imminpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&);
-   void set_imextpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&);
-   void set_minpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&);
+   void set_extpar(const cSMHdCKMRHNEFT_input_parameters&);
+   void set_imminpar(const cSMHdCKMRHNEFT_input_parameters&);
+   void set_imextpar(const cSMHdCKMRHNEFT_input_parameters&);
+   void set_minpar(const cSMHdCKMRHNEFT_input_parameters&);
    void set_mass(const cSMHdCKM_physical&, bool);
    void set_mass(const cSMHdCKMRHN_physical&, bool);
    void set_mass(const standard_model::Standard_model_physical&);
@@ -142,18 +145,16 @@ template <class EFT, class Model>
 void cSMHdCKMRHNEFT_slha_io::fill_slhaea(
    SLHAea::Coll& slhaea, const cSMHdCKM_slha<EFT>& eft,
    const cSMHdCKMRHN_slha<Model>& model,
-   const softsusy::QedQcd& qedqcd, const cSMHdCKMRHNEFT_scales& scales,
-   const cSMHdCKMRHN_observables& observables)
+   const softsusy::QedQcd& qedqcd, const cSMHdCKMRHNEFT_input_parameters& input,
+   const cSMHdCKMRHNEFT_scales& scales, const cSMHdCKMRHN_observables& observables)
 {
    cSMHdCKMRHNEFT_slha_io slha_io;
-   const cSMHdCKM_input_parameters& eft_input = eft.get_input();
-   const cSMHdCKMRHN_input_parameters& model_input = model.get_input();
    const auto& problems = model.get_problems();
    const bool error = problems.have_problem();
 
    slha_io.set_spinfo(problems);
    slha_io.set_sminputs(qedqcd);
-   slha_io.set_input(eft_input, model_input);
+   slha_io.set_input(input);
    if (!error) {
       slha_io.set_spectrum(eft);
       slha_io.set_spectrum(model);
@@ -165,11 +166,12 @@ void cSMHdCKMRHNEFT_slha_io::fill_slhaea(
 
 template <class EFT, class Model>
 SLHAea::Coll cSMHdCKMRHNEFT_slha_io::fill_slhaea(
-   const cSMHdCKM_slha<EFT>& eft, const cSMHdCKMRHN_slha<Model>& model, const softsusy::QedQcd& qedqcd,
+   const cSMHdCKM_slha<EFT>& eft, const cSMHdCKMRHN_slha<Model>& model,
+   const softsusy::QedQcd& qedqcd, const cSMHdCKMRHNEFT_input_parameters& input,
    const cSMHdCKMRHNEFT_scales& scales, const cSMHdCKMRHN_observables& observables)
 {
    SLHAea::Coll slhaea;
-   cSMHdCKMRHNEFT_slha_io::fill_slhaea(slhaea, eft, model, qedqcd, scales, observables);
+   cSMHdCKMRHNEFT_slha_io::fill_slhaea(slhaea, eft, model, qedqcd, input, scales, observables);
 
    return slhaea;
 }

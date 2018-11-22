@@ -1,4 +1,5 @@
 set(cSMHdCKMRHNEFT_SRC
+  cSMHdCKMRHNEFT_input_parameters.cpp
   cSMHdCKMRHNEFT_matching.cpp
   cSMHdCKMRHNEFT_slha_io.cpp
   )

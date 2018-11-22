@@ -22,7 +22,7 @@
 #define cSMHdCKMRHNEFT_TWO_SCALE_HIGH_SCALE_CONSTRAINT_H
 
 #include "cSMHdCKMRHNEFT_high_scale_constraint.hpp"
-#include "cSMHdCKMRHN_input_parameters.hpp"
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 #include "single_scale_constraint.hpp"
 
 namespace flexiblesusy {
@@ -36,7 +36,8 @@ template<>
 class cSMHdCKMRHNEFT_high_scale_constraint<Two_scale> : public Single_scale_constraint {
 public:
    cSMHdCKMRHNEFT_high_scale_constraint() = default;
-   cSMHdCKMRHNEFT_high_scale_constraint(cSMHdCKMRHN<Two_scale>*);
+   cSMHdCKMRHNEFT_high_scale_constraint(cSMHdCKMRHN<Two_scale>*,
+                                        const cSMHdCKMRHNEFT_input_parameters&);
    virtual ~cSMHdCKMRHNEFT_high_scale_constraint() = default;
    virtual void apply() override;
    virtual double get_scale() const override;
@@ -45,7 +46,7 @@ public:
 
    void clear();
    double get_initial_scale_guess() const;
-   const cSMHdCKMRHN_input_parameters& get_input_parameters() const;
+   const cSMHdCKMRHNEFT_input_parameters& get_input_parameters() const;
    cSMHdCKMRHN<Two_scale>* get_model() const;
    void initialize();
    void set_scale(double); ///< fix unification scale (0 = unfixed)
@@ -58,6 +59,7 @@ private:
    double scale{0.};
    double initial_scale_guess{0.};
    cSMHdCKMRHN<Two_scale>* model{nullptr};
+   cSMHdCKMRHNEFT_input_parameters input{};
 
    void check_model_ptr() const;
 };

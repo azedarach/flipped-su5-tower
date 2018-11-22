@@ -4,11 +4,11 @@
 #include "cSMHdCKM_two_scale_convergence_tester.hpp"
 #include "cSMHdCKM_two_scale_model.hpp"
 
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 #include "cSMHdCKMRHNEFT_two_scale_low_scale_constraint.hpp"
 #include "cSMHdCKMRHNEFT_two_scale_matching.hpp"
 #include "cSMHdCKMRHNEFT_two_scale_susy_scale_constraint.hpp"
 
-#include "cSMHdCKMRHN_input_parameters.hpp"
 #include "cSMHdCKMRHN_two_scale_convergence_tester.hpp"
 #include "cSMHdCKMRHN_two_scale_ewsb_solver.hpp"
 #include "cSMHdCKMRHNEFT_two_scale_high_scale_constraint.hpp"
@@ -52,13 +52,11 @@ double cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::get_eft_pole_mass_scale(dou
  * spectrum (pole masses) is calculated.
  *
  * @param qedqcd Standard Model input parameters
- * @param eft_input low-scale model input parameters
- * @param model_input high-scale model input parameters
+ * @param input model input parameters
  */
 void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
    const softsusy::QedQcd& qedqcd,
-   const cSMHdCKM_input_parameters& eft_input,
-   const cSMHdCKMRHN_input_parameters& model_input)
+   const cSMHdCKMRHNEFT_input_parameters& input)
 {
    VERBOSE_MSG("Solving BVP using two-scale solver");
 
@@ -66,7 +64,6 @@ void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
 
    auto& model = this->model;
    model.clear();
-   model.set_input_parameters(model_input);
    model.do_calculate_sm_pole_masses(
       settings.get(Spectrum_generator_settings::calculate_sm_masses));
    model.do_calculate_bsm_pole_masses(
@@ -81,7 +78,6 @@ void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
       settings.get(Spectrum_generator_settings::beta_zero_threshold));
 
    eft.clear();
-   eft.set_input_parameters(eft_input);
    eft.do_calculate_sm_pole_masses(true);
    eft.do_force_output(
       settings.get(Spectrum_generator_settings::force_output));
@@ -101,9 +97,9 @@ void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
    model.set_ewsb_solver(
       std::make_shared<cSMHdCKMRHN_ewsb_solver<Two_scale> >(ewsb_solver));
 
-   cSMHdCKMRHNEFT_high_scale_constraint<Two_scale> high_scale_constraint(&model);
-   cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale> susy_scale_constraint(&model, qedqcd);
-   cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_scale_constraint(&eft, qedqcd);
+   cSMHdCKMRHNEFT_high_scale_constraint<Two_scale> high_scale_constraint(&model, input);
+   cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale> susy_scale_constraint(&model, qedqcd, input);
+   cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_scale_constraint(&eft, qedqcd, input);
 
    // note: to avoid large logarithms the downwards matching loop order
    // is used for both matching conditions

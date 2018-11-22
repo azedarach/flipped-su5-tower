@@ -1,6 +1,5 @@
 #include "cSMHdCKMRHNEFT_slha_io.hpp"
-#include "cSMHdCKM_input_parameters.hpp"
-#include "cSMHdCKMRHN_input_parameters.hpp"
+#include "cSMHdCKMRHNEFT_input_parameters.hpp"
 
 #include "logger.hpp"
 #include "wrappers.hpp"
@@ -18,8 +17,7 @@
 #define PHYSICAL_SLHA(p) model.get_physical_slha().p
 #define LOCALPHYSICAL(p) physical.p
 #define MODELPARAMETER(p) model.get_##p()
-#define EFTINPUTPARAMETER(p) eft_input.p
-#define INPUTPARAMETER(p) model_input.p
+#define INPUTPARAMETER(p) input.p
 #define EXTRAPARAMETER(p) model.get_##p()
 #define DEFINE_PHYSICAL_PARAMETER(p) decltype(LOCALPHYSICAL(p)) p;
 #define LowEnergyConstant(p) Electroweak_constants::p
@@ -45,37 +43,32 @@ void cSMHdCKMRHNEFT_slha_io::set_print_imaginary_parts_of_majorana_mixings(bool 
 /**
  * Stores the EXTPAR input parameters in the SLHA object.
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::set_extpar(const cSMHdCKM_input_parameters& eft_input,
-                                        const cSMHdCKMRHN_input_parameters& model_input)
+void cSMHdCKMRHNEFT_slha_io::set_extpar(const cSMHdCKMRHNEFT_input_parameters& input)
 {
    std::ostringstream extpar;
 
    extpar << "Block EXTPAR\n";
-   extpar << FORMAT_ELEMENT(0, model_input.Qin, "Qin");
-   extpar << FORMAT_ELEMENT(1, model_input.QEWSB, "QEWSB");
-   extpar << FORMAT_ELEMENT(2, eft_input.UV_theta21, "UV_theta21");
-   extpar << FORMAT_ELEMENT(3, eft_input.UV_theta31, "UV_theta31");
-   extpar << FORMAT_ELEMENT(4, eft_input.UV_theta32, "UV_theta32");
-   extpar << FORMAT_ELEMENT(5, eft_input.UV_phi21, "UV_phi21");
-   extpar << FORMAT_ELEMENT(6, eft_input.UV_phi31, "UV_phi31");
-   extpar << FORMAT_ELEMENT(7, eft_input.UV_phi32, "UV_phi32");
-   extpar << FORMAT_ELEMENT(8, eft_input.UV_chi21, "UV_chi21");
-   extpar << FORMAT_ELEMENT(9, eft_input.UV_chi32, "UV_chi32");
-   extpar << FORMAT_ELEMENT(10, eft_input.UV_gamma, "UV_gamma");
+   extpar << FORMAT_ELEMENT(0, input.Qin, "Qin");
+   extpar << FORMAT_ELEMENT(2, input.UV_theta21, "UV_theta21");
+   extpar << FORMAT_ELEMENT(3, input.UV_theta31, "UV_theta31");
+   extpar << FORMAT_ELEMENT(4, input.UV_theta32, "UV_theta32");
+   extpar << FORMAT_ELEMENT(5, input.UV_phi21, "UV_phi21");
+   extpar << FORMAT_ELEMENT(6, input.UV_phi31, "UV_phi31");
+   extpar << FORMAT_ELEMENT(7, input.UV_phi32, "UV_phi32");
+   extpar << FORMAT_ELEMENT(8, input.UV_chi21, "UV_chi21");
+   extpar << FORMAT_ELEMENT(9, input.UV_chi32, "UV_chi32");
+   extpar << FORMAT_ELEMENT(10, input.UV_gamma, "UV_gamma");
    slha_io.set_block(extpar);
-
 }
 
 /**
  * Stores the IMMINPAR input parameters in the SLHA object.
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::set_imminpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&)
+void cSMHdCKMRHNEFT_slha_io::set_imminpar(const cSMHdCKMRHNEFT_input_parameters&)
 {
 
 }
@@ -83,10 +76,9 @@ void cSMHdCKMRHNEFT_slha_io::set_imminpar(const cSMHdCKM_input_parameters&, cons
 /**
  * Stores the IMEXTPAR input parameters in the SLHA object.
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::set_imextpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters&)
+void cSMHdCKMRHNEFT_slha_io::set_imextpar(const cSMHdCKMRHNEFT_input_parameters&)
 {
 
 }
@@ -104,35 +96,28 @@ void cSMHdCKMRHNEFT_slha_io::set_modsel(const SLHA_io::Modsel& modsel)
 /**
  * Stores the MINPAR input parameters in the SLHA object.
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::set_minpar(const cSMHdCKM_input_parameters&, const cSMHdCKMRHN_input_parameters& model_input)
+void cSMHdCKMRHNEFT_slha_io::set_minpar(const cSMHdCKMRHNEFT_input_parameters& input)
 {
    std::ostringstream minpar;
 
    minpar << "Block MINPAR\n";
-   minpar << FORMAT_ELEMENT(1, model_input.LambdaIN, "LambdaIN");
+   minpar << FORMAT_ELEMENT(1, input.LambdaIN, "LambdaIN");
    slha_io.set_block(minpar);
-
 }
 
 /**
  * Stores all input parameters in the SLHA object.
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::set_input(const cSMHdCKM_input_parameters& eft_input,
-                                       const cSMHdCKMRHN_input_parameters& model_input)
+void cSMHdCKMRHNEFT_slha_io::set_input(const cSMHdCKMRHNEFT_input_parameters& input)
 {
-   set_minpar(eft_input, model_input);
-   set_extpar(eft_input, model_input);
-   set_imminpar(eft_input, model_input);
-   set_imextpar(eft_input, model_input);
-
-   slha_io.set_block("MvIN", INPUTPARAMETER(MvInput), "MvInput");
-
+   set_minpar(input);
+   set_extpar(input);
+   set_imminpar(input);
+   set_imextpar(input);
 }
 
 /**
@@ -511,35 +496,30 @@ void cSMHdCKMRHNEFT_slha_io::read_from_stream(std::istream& istr)
  * Fill struct of model input parameters from SLHA object (MINPAR,
  * EXTPAR and IMEXTPAR blocks)
  *
- * @param eft_input struct of EFT input parameters
- * @param model_input struct of model input parameters
+ * @param input struct of model input parameters
  */
-void cSMHdCKMRHNEFT_slha_io::fill(cSMHdCKM_input_parameters& eft_input,
-                                  cSMHdCKMRHN_input_parameters& model_input) const
+void cSMHdCKMRHNEFT_slha_io::fill(cSMHdCKMRHNEFT_input_parameters& input) const
 {
-   SLHA_io::Tuple_processor minpar_processor = [&eft_input, &model_input, this] (int key, double value) {
-      return fill_minpar_tuple(eft_input, model_input, key, value);
+   SLHA_io::Tuple_processor minpar_processor = [&input, this] (int key, double value) {
+      return fill_minpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor extpar_processor = [&eft_input, &model_input, this] (int key, double value) {
-      return fill_extpar_tuple(eft_input, model_input, key, value);
+   SLHA_io::Tuple_processor extpar_processor = [&input, this] (int key, double value) {
+      return fill_extpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor imminpar_processor = [&eft_input, &model_input, this] (int key, double value) {
-      return fill_imminpar_tuple(eft_input, model_input, key, value);
+   SLHA_io::Tuple_processor imminpar_processor = [&input, this] (int key, double value) {
+      return fill_imminpar_tuple(input, key, value);
    };
 
-   SLHA_io::Tuple_processor imextpar_processor = [&eft_input, &model_input, this] (int key, double value) {
-      return fill_imextpar_tuple(eft_input, model_input, key, value);
+   SLHA_io::Tuple_processor imextpar_processor = [&input, this] (int key, double value) {
+      return fill_imextpar_tuple(input, key, value);
    };
 
    slha_io.read_block("MINPAR", minpar_processor);
    slha_io.read_block("EXTPAR", extpar_processor);
    slha_io.read_block("IMMINPAR", imminpar_processor);
    slha_io.read_block("IMEXTPAR", imextpar_processor);
-
-   slha_io.read_block("MvIN", model_input.MvInput);
-
 }
 
 /**
@@ -623,40 +603,36 @@ void cSMHdCKMRHNEFT_slha_io::fill(Spectrum_generator_settings& settings) const
    slha_io.fill(settings);
 }
 
-void cSMHdCKMRHNEFT_slha_io::fill_minpar_tuple(cSMHdCKM_input_parameters& /* eft_input */,
-                                               cSMHdCKMRHN_input_parameters& model_input,
+void cSMHdCKMRHNEFT_slha_io::fill_minpar_tuple(cSMHdCKMRHNEFT_input_parameters& input,
                                                int key, double value)
 {
    switch (key) {
-   case 1: model_input.LambdaIN = value; break;
+   case 1: input.LambdaIN = value; break;
    default: WARNING("Unrecognized entry in block MINPAR: " << key); break;
    }
 
 }
 
-void cSMHdCKMRHNEFT_slha_io::fill_extpar_tuple(cSMHdCKM_input_parameters& eft_input,
-                                               cSMHdCKMRHN_input_parameters& model_input,
+void cSMHdCKMRHNEFT_slha_io::fill_extpar_tuple(cSMHdCKMRHNEFT_input_parameters& input,
                                                int key, double value)
 {
    switch (key) {
-   case 0: model_input.Qin = value; break;
-   case 1: model_input.QEWSB = value; break;
-   case 2: eft_input.UV_theta21 = value; break;
-   case 3: eft_input.UV_theta31 = value; break;
-   case 4: eft_input.UV_theta32 = value; break;
-   case 5: eft_input.UV_phi21 = value; break;
-   case 6: eft_input.UV_phi31 = value; break;
-   case 7: eft_input.UV_phi32 = value; break;
-   case 8: eft_input.UV_chi21 = value; break;
-   case 9: eft_input.UV_chi32= value; break;
-   case 10: eft_input.UV_gamma = value; break;
+   case 0: input.Qin = value; break;
+   case 2: input.UV_theta21 = value; break;
+   case 3: input.UV_theta31 = value; break;
+   case 4: input.UV_theta32 = value; break;
+   case 5: input.UV_phi21 = value; break;
+   case 6: input.UV_phi31 = value; break;
+   case 7: input.UV_phi32 = value; break;
+   case 8: input.UV_chi21 = value; break;
+   case 9: input.UV_chi32= value; break;
+   case 10: input.UV_gamma = value; break;
    default: WARNING("Unrecognized entry in block EXTPAR: " << key); break;
    }
 
 }
 
-void cSMHdCKMRHNEFT_slha_io::fill_imminpar_tuple(cSMHdCKM_input_parameters& /* eft_input */,
-                                                 cSMHdCKMRHN_input_parameters& /* model_input */,
+void cSMHdCKMRHNEFT_slha_io::fill_imminpar_tuple(cSMHdCKMRHNEFT_input_parameters& /* input */,
                                                  int key, double value)
 {
    switch (key) {
@@ -665,8 +641,7 @@ void cSMHdCKMRHNEFT_slha_io::fill_imminpar_tuple(cSMHdCKM_input_parameters& /* e
 
 }
 
-void cSMHdCKMRHNEFT_slha_io::fill_imextpar_tuple(cSMHdCKM_input_parameters& /* eft_input */,
-                                                 cSMHdCKMRHN_input_parameters& /* model_input */,
+void cSMHdCKMRHNEFT_slha_io::fill_imextpar_tuple(cSMHdCKMRHNEFT_input_parameters& /* input */,
                                                  int key, double value)
 {
    switch (key) {
