@@ -37,6 +37,7 @@
 #include "wrappers.hpp"
 
 #define LOCALPHYSICAL(p) physical.p
+#define INPUTPARAMETER(p) this->input.p
 #define MODELPARAMETER(p) this->p
 #define PHYSICAL_SLHA(p) physical_slha.p
 #define PHYSICAL_SLHA_REAL(p) Re(physical_slha.p)
@@ -223,8 +224,21 @@ void cSMHdCKM_slha<Model>::calculate_ckm_matrix()
 template <class Model>
 void cSMHdCKM_slha<Model>::calculate_pmns_matrix()
 {
-   pmns = Ve_slha * UV_slha.adjoint();
+   const auto sign_delta_mAsq = INPUTPARAMETER(sign_delta_mAsq);
 
+   Eigen::Matrix<double,3,3> neutrino_basis(Eigen::Matrix<double,3,3>::Zero());
+   if (sign_delta_mAsq >= 0) {
+      neutrino_basis = Eigen::Matrix<double,3,3>::Identity();
+   } else {
+      neutrino_basis(0,2) = 1.;
+      neutrino_basis(1,0) = 1.;
+      neutrino_basis(2,1) = 1.;
+   }
+
+   Eigen::Matrix<std::complex<double>,3,3> Uv(neutrino_basis.transpose() * UV_slha);
+   pmns = Ve_slha * Uv.adjoint();
+   PMNS_parameters::to_pdg_convention(pmns, Uv, Ve_slha, Ue_slha);
+   UV_slha = neutrino_basis * Uv;
 }
 
 /**
@@ -297,6 +311,7 @@ std::ostream& operator<<(std::ostream& ostr, const cSMHdCKM_slha<Model>& model)
 } // namespace flexiblesusy
 
 #undef LOCALPHYSICAL
+#undef INPUTPARAMETER
 #undef MODELPARAMETER
 #undef PHYSICAL_SLHA
 #undef PHYSICAL_SLHA_REAL

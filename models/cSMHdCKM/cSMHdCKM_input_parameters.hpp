@@ -32,6 +32,7 @@ struct cSMHdCKM_input_parameters {
    double LambdaIN{};
    double Qin{};
    double QEWSB{};
+   int sign_delta_mAsq{1};
    double UV_theta21{0.};
    double UV_theta31{0.};
    double UV_theta32{0.};
