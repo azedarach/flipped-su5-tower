@@ -28,6 +28,9 @@ endif()
 find_package(Eigen3 3.1 REQUIRED)
 find_package(GSL REQUIRED)
 
+include(CheckIncludeFileCXX)
+check_include_file_cxx(random ENABLE_RANDOM)
+
 find_himalaya()
 find_lapack()
 find_looptools()
