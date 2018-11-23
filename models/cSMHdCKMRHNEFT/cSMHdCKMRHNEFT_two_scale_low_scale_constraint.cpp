@@ -97,6 +97,7 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::apply()
 
    MODEL->set_v(Re((2*MZMSbar)/Sqrt(0.6*Sqr(g1) + Sqr(g2))));
 
+   MODEL->get_input().sign_delta_mAsq = INPUTPARAMETER(sign_delta_mAsq);
    calculate_Kappa();
    calculate_neutrino_basis();
    calculate_neutrino_mixing();
