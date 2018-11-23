@@ -1005,10 +1005,10 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fv() const
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fv;
 
    mass_matrix_Fv(0,0) = 0.25*Sqr(v)*Kappa(0,0);
-   mass_matrix_Fv(0,1) = 0.25*Sqr(v)*Kappa(0,1) + 0.25*Sqr(v)*Kappa(1,0);
-   mass_matrix_Fv(0,2) = 0.25*Sqr(v)*Kappa(0,2) + 0.25*Sqr(v)*Kappa(2,0);
+   mass_matrix_Fv(0,1) = 0.125*Sqr(v)*Kappa(0,1) + 0.125*Sqr(v)*Kappa(1,0);
+   mass_matrix_Fv(0,2) = 0.125*Sqr(v)*Kappa(0,2) + 0.125*Sqr(v)*Kappa(2,0);
    mass_matrix_Fv(1,1) = 0.25*Sqr(v)*Kappa(1,1);
-   mass_matrix_Fv(1,2) = 0.25*Sqr(v)*Kappa(1,2) + 0.25*Sqr(v)*Kappa(2,1);
+   mass_matrix_Fv(1,2) = 0.125*Sqr(v)*Kappa(1,2) + 0.125*Sqr(v)*Kappa(2,1);
    mass_matrix_Fv(2,2) = 0.25*Sqr(v)*Kappa(2,2);
 
    Symmetrize(mass_matrix_Fv);
