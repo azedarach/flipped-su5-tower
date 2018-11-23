@@ -6,6 +6,9 @@
 #include "error.hpp"
 #include "single_scale_constraint.hpp"
 
+// @todo remove
+#include <iostream>
+
 namespace flexiblesusy {
 
 #define CLASSNAME cSMHdCKMRHNEFT_matching_up<Two_scale>
@@ -134,10 +137,18 @@ void CLASSNAME::match()
    eft->run_to(get_scale());
    model->run_to(get_scale());
 
+   std::cout << "start of downwards matching:\n";
+   eft->print(std::cout);
+   model->print(std::cout);
+
    if (model->get_thresholds() && loop_order)
       cSMHdCKMRHNEFT_matching::match_high_to_low_scale_model(*eft, *model, loop_order);
    else
       cSMHdCKMRHNEFT_matching::match_high_to_low_scale_model_tree_level(*eft, *model);
+
+   std::cout << "end of downwards matching:\n";
+   eft->print(std::cout);
+   model->print(std::cout);
 }
 
 void CLASSNAME::match_tree_level()

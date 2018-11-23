@@ -13,6 +13,9 @@
 
 #include <cmath>
 
+// @todo remove
+#include <iostream>
+
 namespace flexiblesusy {
 namespace cSMHdCKMRHNEFT_matching {
 
@@ -48,6 +51,9 @@ cSMHdCKM_mass_eigenstates calculate_EFT_tree_level(
    eft_0l.solve_ewsb_tree_level();
    eft_0l.calculate_DRbar_masses();
 
+   std::cout << "calculated EFT at end of calculate_EFT_tree_level:\n";
+   eft_0l.print(std::cout);
+
    return eft_0l;
 }
 
@@ -73,6 +79,9 @@ cSMHdCKMRHN_mass_eigenstates calculate_cSMHdCKMRHN_tree_level(
    model_0l.calculate_DRbar_masses();
 
    match_low_to_high_scale_model_tree_level(model_0l, eft);
+
+   std::cout << "matched model at end of calculate_cSMHdCKMRHN_tree_level:\n";
+   model_0l.print(std::cout);
 
    return model_0l;
 }
@@ -185,6 +194,11 @@ void match_high_to_low_scale_model_1loop(
    const double mh2_eft = Sqr(eft_0l.get_Mhh());
    const double Mh2_eft = calculate_Mh2_pole(eft_0l);
    const double Mh2_bsm = calculate_Mh2_pole(model_0l, model_1l);
+
+   std::cout << "eft tree-level mh2 = " << mh2_eft << '\n';
+   std::cout << "eft Mh2 = " << Mh2_eft << '\n';
+   std::cout << "BSM Mh2 = " << Mh2_bsm << '\n';
+   std::cout << "calculated lambda = " << (Mh2_bsm - Mh2_eft + mh2_eft)/Sqr(eft.get_v()) << '\n';
 
    eft.set_Lambdax((Mh2_bsm - Mh2_eft + mh2_eft)/Sqr(eft.get_v()));
 
@@ -695,6 +709,13 @@ double calculate_MZ_DRbar_1loop(
    return AbsSqrt(mz2);
 }
 
+void calculate_seesaw_Mv(const Eigen::Matrix<std::complex<double>,3,3>& Kappa,
+                         const Eigen::Matrix<std::complex<double>,3,3>& Yv,
+                         Eigen::Matrix<std::complex<double>,3,3>& Mv)
+{
+   Mv = 2. * Yv * Kappa.inverse() * Yv.transpose();
+}
+
 /**
  * Calculates cSMHdCKMRHN parameters at 1-loop level by performing a
  * 1-loop matching.
@@ -833,32 +854,17 @@ void match_low_to_high_scale_model_tree_level(
    model.set_g2(eft.get_g2()*cSMHdCKM_info::normalization_g2/cSMHdCKMRHN_info::normalization_g2);
    model.set_g3(eft.get_g3()*cSMHdCKM_info::normalization_g3/cSMHdCKMRHN_info::normalization_g3);
 
-   {
-      auto MODEL = &model;
-      const double VEV = eft.get_v();
+   model.set_v(eft.get_v());
 
-      
-      MODEL->set_v(Re(VEV));
+   model.set_Yu(eft.get_Yu());
+   model.set_Yd(eft.get_Yd());
+   model.set_Ye(eft.get_Ye());
 
-   }
-
-   Eigen::Matrix<double, 3, 3> upQuarksDRbar    = ZEROMATRIX(3,3);
-   Eigen::Matrix<double, 3, 3> downQuarksDRbar  = ZEROMATRIX(3,3);
-   Eigen::Matrix<double, 3, 3> downLeptonsDRbar = ZEROMATRIX(3,3);
-   Eigen::Matrix<double, 3, 3> neutrinosDRbar   = ZEROMATRIX(3,3);
-
-   upQuarksDRbar.diagonal()    = eft.get_MFu();
-   downQuarksDRbar.diagonal()  = eft.get_MFd();
-   downLeptonsDRbar.diagonal() = eft.get_MFe();
-   neutrinosDRbar.diagonal()   = eft.get_MFv();
-
-   const auto v = MODELPARAMETER(v);
    const auto Yv = MODELPARAMETER(Yv);
-   model.set_Yu(((1.4142135623730951*upQuarksDRbar)/v).transpose());
-   model.set_Yd(((1.4142135623730951*downQuarksDRbar)/v).transpose());
-   model.set_Ye(((1.4142135623730951*downLeptonsDRbar)/v).transpose());
+   Eigen::Matrix<std::complex<double>,3,3> Mv(Eigen::Matrix<std::complex<double>,3,3>::Zero());
+   calculate_seesaw_Mv(eft.get_Kappa(), Yv, Mv);
 
-   model.set_Mv(0.5 * Sqr(v) * (Yv * neutrinosDRbar.inverse() * Yv.transpose()));
+   model.set_Mv(Mv);
 
    model.calculate_DRbar_masses();
 }
