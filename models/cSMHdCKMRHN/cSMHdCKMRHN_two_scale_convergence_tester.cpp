@@ -65,7 +65,9 @@ double cSMHdCKMRHN_convergence_tester<Two_scale>::max_rel_diff() const
    for (int i = 0; i < 3; ++i) {
       diff[i + 8] = MaxRelDiff(OLD1(MFe,i),NEW1(MFe,i));
    }
-   for (int i = 0; i < 6; ++i) {
+   // @note do not check light neutrino masses for convergence, as
+   // these are likely to be highly inaccurate
+   for (int i = 3; i < 6; ++i) {
       diff[i + 11] = MaxRelDiff(OLD1(MFv,i),NEW1(MFv,i));
    }
    diff[17] = MaxRelDiff(OLD(MVWp),NEW(MVWp));
