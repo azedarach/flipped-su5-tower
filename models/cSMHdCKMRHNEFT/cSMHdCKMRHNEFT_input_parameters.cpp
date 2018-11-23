@@ -27,20 +27,29 @@ namespace flexiblesusy {
 
 Eigen::ArrayXd cSMHdCKMRHNEFT_input_parameters::get() const
 {
-   Eigen::ArrayXd pars(12);
+   Eigen::ArrayXd pars(21);
 
    pars(0) = LambdaIN;
    pars(1) = Qin;
    pars(2) = sign_delta_mAsq;
-   pars(3) = UV_theta21;
-   pars(4) = UV_theta31;
-   pars(5) = UV_theta32;
-   pars(6) = UV_phi21;
-   pars(7) = UV_phi31;
-   pars(8) = UV_phi32;
-   pars(9) = UV_chi21;
-   pars(10) = UV_chi32;
-   pars(11) = UV_gamma;
+   pars(3) = Re(UvInput(0,0));
+   pars(4) = Im(UvInput(0,0));
+   pars(5) = Re(UvInput(0,1));
+   pars(6) = Im(UvInput(0,1));
+   pars(7) = Re(UvInput(0,2));
+   pars(8) = Im(UvInput(0,2));
+   pars(9) = Re(UvInput(1,0));
+   pars(10) = Im(UvInput(1,0));
+   pars(11) = Re(UvInput(1,1));
+   pars(12) = Im(UvInput(1,1));
+   pars(13) = Re(UvInput(1,2));
+   pars(14) = Im(UvInput(1,2));
+   pars(15) = Re(UvInput(2,0));
+   pars(16) = Im(UvInput(2,0));
+   pars(17) = Re(UvInput(2,1));
+   pars(18) = Im(UvInput(2,1));
+   pars(19) = Re(UvInput(2,2));
+   pars(20) = Im(UvInput(2,2));
 
    return pars;
 }
@@ -50,32 +59,27 @@ void cSMHdCKMRHNEFT_input_parameters::set(const Eigen::ArrayXd& pars)
    LambdaIN = pars(0);
    Qin = pars(1);
    sign_delta_mAsq = pars(2);
-   UV_theta21 = pars(3);
-   UV_theta31 = pars(4);
-   UV_theta32 = pars(5);
-   UV_phi21 = pars(6);
-   UV_phi31 = pars(7);
-   UV_phi32 = pars(8);
-   UV_chi21 = pars(9);
-   UV_chi32 = pars(10);
-   UV_gamma = pars(11);
-
+   UvInput(0,0) = std::complex<double>(pars(3), pars(4));
+   UvInput(0,1) = std::complex<double>(pars(5), pars(6));
+   UvInput(0,2) = std::complex<double>(pars(7), pars(8));
+   UvInput(1,0) = std::complex<double>(pars(9), pars(10));
+   UvInput(1,1) = std::complex<double>(pars(11), pars(12));
+   UvInput(1,2) = std::complex<double>(pars(13), pars(14));
+   UvInput(2,0) = std::complex<double>(pars(15), pars(16));
+   UvInput(2,1) = std::complex<double>(pars(17), pars(18));
+   UvInput(2,2) = std::complex<double>(pars(19), pars(20));
 }
 
 std::ostream& operator<<(std::ostream& ostr, const cSMHdCKMRHNEFT_input_parameters& input)
 {
    ostr << "LambdaIN = " << INPUT(LambdaIN) << ", ";
    ostr << "Qin = " << INPUT(Qin) << ", ";
-   ostr << "sign_delta_mAsq = " << INPUT(sign_delta_mAsq) << "< ";
-   ostr << "UV_theta21 = " << INPUT(UV_theta21) << ", ";
-   ostr << "UV_theta31 = " << INPUT(UV_theta31) << ", ";
-   ostr << "UV_theta32 = "<< INPUT(UV_theta32) << ", ";
-   ostr << "UV_phi21 = " << INPUT(UV_phi21) << ", ";
-   ostr << "UV_phi31 = " << INPUT(UV_phi31) << ", ";
-   ostr << "UV_phi32 = " << INPUT(UV_phi32) << ", ";
-   ostr << "UV_chi21 = " << INPUT(UV_chi21) << ", ";
-   ostr << "UV_chi32 = " << INPUT(UV_chi32) << ", ";
-   ostr << "UV_gamma = " << INPUT(UV_gamma) << ", ";
+   ostr << "sign_delta_mAsq = " << INPUT(sign_delta_mAsq) << ", ";
+   for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+         ostr << "UvInput(" << i << ", " << j << ") = " << INPUT(UvInput(i, j)) << ", ";
+      }
+   }
 
    return ostr;
 }

@@ -86,19 +86,12 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::apply()
 {
    check_model_ptr();
 
-
-   std::cout << "start of low_scale_constraint::apply:\n";
-   model->print(std::cout);
-   std::cout << "ckm = " << ckm << '\n';
-   std::cout << "pmns = " << pmns << '\n';
-
    model->calculate_DRbar_masses();
    update_scale();
    qedqcd.run_to(scale, 1.0e-5);
    calculate_DRbar_gauge_couplings();
    calculate_running_SM_masses();
    calculate_neutrino_basis();
-   calculate_neutrino_mixings();
 
    const auto g1 = MODELPARAMETER(g1);
    const auto g2 = MODELPARAMETER(g2);
@@ -112,39 +105,6 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::apply()
    MODEL->set_g1(new_g1);
    MODEL->set_g2(new_g2);
    MODEL->set_g3(new_g3);
-
-   Eigen::Matrix<std::complex<double>,3,3> Vu;
-   Eigen::Matrix<std::complex<double>,3,3> Uu;
-   Eigen::Array<double,3,1> Yu_hat;
-
-   fs_svd(MODEL->get_Yu(), Yu_hat, Uu, Vu);
-
-   Eigen::Matrix<std::complex<double>,3,3> Vd;
-   Eigen::Matrix<std::complex<double>,3,3> Ud;
-   Eigen::Array<double,3,1> Yd_hat;
-
-   fs_svd(MODEL->get_Yd(), Yd_hat, Ud, Vd);
-
-   Eigen::Matrix<std::complex<double>,3,3> local_ckm = Vu * Vd.adjoint();
-   std::cout << "local_ckm = " << local_ckm << '\n';
-   CKM_parameters::to_pdg_convention(local_ckm, Vu, Vd, Uu, Ud);
-   std::cout << "pdg convention ckm = " << local_ckm << '\n';
-
-   Eigen::Matrix<std::complex<double>,3,3> Ve;
-   Eigen::Matrix<std::complex<double>,3,3> Ue;
-   Eigen::Array<double,3,1> Ye_hat;
-
-   fs_svd(MODEL->get_Ye(), Ye_hat, Ue, Ve);
-
-   Eigen::Matrix<std::complex<double>,3,3> Uv;
-   Eigen::Array<double,3,1> Kappa_hat;
-   fs_diagonalize_symmetric(MODEL->get_Kappa(), Kappa_hat, Uv);
-
-   Eigen::Matrix<std::complex<double>,3,3> local_pmns = Ve * Uv.adjoint() * neutrinoBasis;
-   std::cout << "local_pmns = " << local_pmns << '\n';
-
-   std::cout << "end of low_scale_constraint::apply:\n";
-   model->print(std::cout);
 }
 
 const Eigen::Matrix<std::complex<double>,3,3>& cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::get_ckm()
@@ -197,7 +157,6 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::clear()
    downLeptonsDRbar.setZero();
    neutrinoDRbar.setZero();
    neutrinoBasis.setIdentity();
-   neutrinoMix.setIdentity();
    mW_run = 0.;
    mZ_run = 0.;
    AlphaS = 0.;
@@ -223,7 +182,6 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::initialize()
    downLeptonsDRbar.setZero();
    neutrinoDRbar.setZero();
    neutrinoBasis.setIdentity();
-   neutrinoMix.setIdentity();
    mW_run = 0.;
    mZ_run = 0.;
    AlphaS = 0.;
@@ -482,50 +440,10 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_neutrino_basis()
    }
 }
 
-void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_neutrino_mixings()
-{
-   const auto UV_theta21 = INPUTPARAMETER(UV_theta21);
-   const auto UV_theta31 = INPUTPARAMETER(UV_theta31);
-   const auto UV_theta32 = INPUTPARAMETER(UV_theta32);
-   const auto UV_phi21 = INPUTPARAMETER(UV_phi21);
-   const auto UV_phi31 = INPUTPARAMETER(UV_phi31);
-   const auto UV_phi32 = INPUTPARAMETER(UV_phi32);
-   const auto UV_chi21 = INPUTPARAMETER(UV_chi21);
-   const auto UV_chi32 = INPUTPARAMETER(UV_chi32);
-   const auto UV_gamma = INPUTPARAMETER(UV_gamma);
-
-   const auto prefactor = Exp(std::complex<double>(0.,UV_gamma));
-   const auto uv_elem = [](double phi_1, double phi_2,
-                           double theta_1, double theta_2, double theta_3)
-      -> std::complex<double> {
-      return -Cos(theta_1) * Cos(theta_2) * Cos(theta_3) *
-      Exp(std::complex<double>(0,phi_1))
-      - Sin(theta_2) * Sin(theta_3) * Exp(std::complex<double>(0,-phi_2));
-   };
-
-   neutrinoMix(0,0) = prefactor * uv_elem(UV_phi31 + Pi, 0., UV_theta31, 0., 0.);
-   neutrinoMix(1,0) = prefactor * uv_elem(UV_phi21, 0., UV_theta31 - 0.5 * Pi, Pi, UV_theta21);
-   neutrinoMix(2,0) = prefactor * uv_elem(UV_chi21, 0., UV_theta21 - 0.5 * Pi, Pi,
-                                          UV_theta21 - 0.5 * Pi);
-   neutrinoMix(0,1) = prefactor * uv_elem(UV_phi32, 0., UV_theta31 - 0.5 * Pi, UV_theta32, Pi);
-   neutrinoMix(1,1) = prefactor * uv_elem(UV_phi21 + UV_phi32 - UV_phi31, UV_chi32 + UV_chi21,
-                                          UV_theta31, UV_theta32, UV_theta21);
-   neutrinoMix(2,1) = prefactor * uv_elem(UV_phi32 - UV_phi31 + UV_chi21, UV_phi21 + UV_chi32,
-                                          UV_theta31, UV_theta32, UV_theta21 - 0.5 * Pi);
-   neutrinoMix(0,2) = prefactor * uv_elem(UV_chi32, 0., UV_theta31 - 0.5 * Pi,
-                                          UV_theta32 - 0.5 * Pi, Pi);
-   neutrinoMix(1,2) = prefactor * uv_elem(UV_phi21 - UV_phi31 + UV_chi32, UV_phi32 + UV_chi21,
-                                          UV_theta31, UV_theta32 - 0.5 * Pi, UV_theta21);
-   neutrinoMix(2,2) = prefactor * uv_elem(UV_chi21 + UV_chi32 - UV_phi31, UV_phi21 + UV_phi32,
-                                          UV_theta31, UV_theta32 - 0.5 * Pi,
-                                          UV_theta21 - 0.5 * Pi);
-}
-
 void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_DRbar_yukawa_couplings()
 {
    calculate_running_SM_masses();
    calculate_neutrino_basis();
-   calculate_neutrino_mixings();
    calculate_Yu_DRbar();
    calculate_Yd_DRbar();
    calculate_Ye_DRbar();
@@ -538,7 +456,6 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_Yu_DRbar()
    const auto v = MODELPARAMETER(v);
    MODEL->set_Yu(((1.4142135623730951*upQuarksDRbar)/v).template cast<std::complex
       <double> >());
-
 }
 
 void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_Yd_DRbar()
@@ -562,10 +479,9 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_Ye_DRbar()
    check_model_ptr();
 
    const auto v = MODELPARAMETER(v);
-   MODEL->set_Ye(((1.4142135623730951*downLeptonsDRbar*(PMNS*neutrinoBasis.transpose()*neutrinoMix))/v).template cast<std::
+   const auto UvInput = INPUTPARAMETER(UvInput);
+   MODEL->set_Ye(((1.4142135623730951*downLeptonsDRbar*(PMNS*neutrinoBasis.transpose()*UvInput))/v).template cast<std::
       complex<double> >());
-
-   std::cout << "Ye = " << MODEL->get_Ye() << '\n';
 
    Eigen::Matrix<std::complex<double>,3,3> Ve;
    Eigen::Matrix<std::complex<double>,3,3> Ue;
@@ -573,30 +489,18 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_Ye_DRbar()
 
    fs_svd(MODEL->get_Ye(), Ye_hat, Ve, Ue);
 
-   std::cout << "Ve = " << Ve << '\n';
-   std::cout << "Ue = " << Ue << '\n';
-
-   std::cout << "target = " << PMNS*neutrinoBasis.transpose()*neutrinoMix << '\n';
 }
 
 void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_Kappa()
 {
-   std::cout << "calculated neutrinoBasis = " << neutrinoBasis << '\n';
-   std::cout << "calculated neutrinoMix = " << neutrinoMix << '\n';
-
    const auto v = MODELPARAMETER(v);
-   MODEL->set_Kappa(((4. * neutrinoMix.transpose() * neutrinoDRbar * neutrinoMix)/
+   const auto UvInput = INPUTPARAMETER(UvInput);
+   MODEL->set_Kappa(((4. * UvInput.transpose() * neutrinoDRbar * UvInput)/
                      Sqr(v)).template cast<std::complex<double> >());
-
-   std::cout << "new Kappa = " << MODEL->get_Kappa() << '\n';
-   std::cout << "Uv^*.Kappa.Uv^dagger = " << neutrinoMix.conjugate()*MODEL->get_Kappa()*neutrinoMix.adjoint()
-             << '\n';
 
    Eigen::Matrix<std::complex<double>,3,3> Uv;
    Eigen::Array<double,3,1> mv;
    fs_diagonalize_symmetric(MODEL->get_Kappa(), mv, Uv);
-
-   std::cout << "local Uv = " << Uv << '\n';
 }
 
 void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::check_model_ptr() const
