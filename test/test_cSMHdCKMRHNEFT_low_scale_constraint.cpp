@@ -2,13 +2,18 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE test_cSMHdCKMRHNEFT_low_scale_constraint
 
+#include "config.h"
 #include "ew_input.hpp"
 
 #include "matrix_tests.hpp"
+#include "random_matrix.hpp"
 
 #include <boost/test/unit_test.hpp>
 
 #include <cstdlib>
+#ifdef ENABLE_RANDOM
+#include <random>
+#endif
 
 #include "cSMHdCKM_two_scale_model.hpp"
 
@@ -44,15 +49,11 @@ void initialize_model_input(cSMHdCKMRHNEFT_input_parameters& input)
    input.LambdaIN = 0.2;
    input.Qin = 2.e16;
    input.sign_delta_mAsq = 1;
-   input.UV_theta21 = random_angle();
-   input.UV_theta31 = random_angle();
-   input.UV_theta32 = random_angle();
-   input.UV_phi21 = random_angle();
-   input.UV_phi31 = random_angle();
-   input.UV_phi32 = random_angle();
-   input.UV_chi21 = random_angle();
-   input.UV_chi32 = random_angle();
-   input.UV_gamma = random_angle();
+
+#ifdef ENABLE_RANDOM
+   std::mt19937 generator;
+   random_cue_matrix(input.UvInput, generator);
+#endif
 }
 
 void initialize_model(cSMHdCKM<Two_scale>& model)
@@ -77,26 +78,6 @@ void initialize_model(cSMHdCKM<Two_scale>& model)
 
    model.set_mu2(Electroweak_constants::mu2SM);
    model.set_v(Electroweak_constants::vev);
-}
-
-// test that construction of neutrino mixing matrix from
-// input angles is unitary
-BOOST_AUTO_TEST_CASE( test_neutrino_mixing_matrix_construction )
-{
-   cSMHdCKM<Two_scale> model;
-   softsusy::QedQcd qedqcd;
-   cSMHdCKMRHNEFT_input_parameters input;
-
-   initialize_sm_input(qedqcd);
-   initialize_model_input(input);
-   initialize_model(model);
-
-   cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_scale_constraint(&model, qedqcd, input);
-   low_scale_constraint.initialize();
-
-   low_scale_constraint.calculate_neutrino_mixings();
-
-   BOOST_CHECK(is_unitary(low_scale_constraint.neutrinoMix, 1.e-12));
 }
 
 // test that the constructed up-type quark Yukawas are
@@ -149,6 +130,16 @@ BOOST_AUTO_TEST_CASE( test_lepton_mixing_nh )
 
    low_scale_constraint.apply();
 
+   Eigen::Matrix<std::complex<double>,3,3> Ve(model.get_Ve());
+   Eigen::Matrix<std::complex<double>,3,3> Ue(model.get_Ue());
+   Eigen::Matrix<std::complex<double>,3,3> UV(model.get_UV());
+   Eigen::Matrix<std::complex<double>,3,3> pmns(Ve * UV.adjoint());
+
+   BOOST_CHECK(is_unitary(UV, 1.e-12));
+
+   PMNS_parameters::to_pdg_convention(pmns, UV, Ve, Ue);
+
+   BOOST_CHECK(is_equal(pmns, low_scale_constraint.get_pmns(), 1.e-10));
 }
 
 // test that the constructed PMNS matrix agrees with
@@ -164,8 +155,20 @@ BOOST_AUTO_TEST_CASE( test_lepton_mixing_ih )
    initialize_model_input(input);
    initialize_model(model);
 
+   input.sign_delta_mAsq = -1;
+
    cSMHdCKMRHNEFT_low_scale_constraint<Two_scale> low_scale_constraint(&model, qedqcd, input);
 
    low_scale_constraint.apply();
 
+   Eigen::Matrix<std::complex<double>,3,3> Ve(model.get_Ve());
+   Eigen::Matrix<std::complex<double>,3,3> Ue(model.get_Ue());
+   Eigen::Matrix<std::complex<double>,3,3> UV(model.get_UV());
+   Eigen::Matrix<std::complex<double>,3,3> pmns(Ve * UV.adjoint());
+
+   BOOST_CHECK(is_unitary(UV, 1.e-12));
+
+   PMNS_parameters::to_pdg_convention(pmns, UV, Ve, Ue);
+
+   BOOST_CHECK(is_equal(pmns, low_scale_constraint.get_pmns(), 1.e-10));
 }
