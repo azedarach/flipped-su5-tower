@@ -2,6 +2,8 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE test_cSMHdCKMRHNEFT_low_scale_constraint
 
+#include "ew_input.hpp"
+
 #include "matrix_tests.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -55,7 +57,26 @@ void initialize_model_input(cSMHdCKMRHNEFT_input_parameters& input)
 
 void initialize_model(cSMHdCKM<Two_scale>& model)
 {
+   model.set_g1(Electroweak_constants::g1);
+   model.set_g2(Electroweak_constants::g2);
+   model.set_g3(Electroweak_constants::g3);
 
+   model.set_Yu(0, 0, Electroweak_constants::yuSM);
+   model.set_Yu(1, 1, Electroweak_constants::ycSM);
+   model.set_Yu(2, 2, Electroweak_constants::ytSM);
+
+   model.set_Yd(0, 0, Electroweak_constants::ydSM);
+   model.set_Yd(1, 1, Electroweak_constants::ysSM);
+   model.set_Yd(2, 2, Electroweak_constants::ybSM);
+
+   model.set_Ye(0, 0, Electroweak_constants::yeSM);
+   model.set_Ye(1, 1, Electroweak_constants::ymSM);
+   model.set_Ye(2, 2, Electroweak_constants::ylSM);
+
+   model.set_Lambdax(Electroweak_constants::lamSM);
+
+   model.set_mu2(Electroweak_constants::mu2SM);
+   model.set_v(Electroweak_constants::vev);
 }
 
 // test that construction of neutrino mixing matrix from
