@@ -469,6 +469,7 @@ void cSMHdCKMRHNEFT_low_scale_constraint<Two_scale>::calculate_DRbar_yukawa_coup
 {
    calculate_running_SM_masses();
    calculate_neutrino_basis();
+   calculate_neutrino_mixing();
    calculate_Yu_DRbar();
    calculate_Yd_DRbar();
    calculate_Ye_DRbar();
