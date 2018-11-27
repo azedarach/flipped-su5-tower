@@ -58,6 +58,8 @@ Spectrum_generator_result run_spectrum_generator(
    settings.set(Spectrum_generator_settings::pole_mass_loop_order, 0);
    settings.set(Spectrum_generator_settings::ewsb_loop_order, 0);
    settings.set(Spectrum_generator_settings::calculate_sm_masses, 1);
+   settings.set(Spectrum_generator_settings::eft_matching_loop_order_up, 0);
+   settings.set(Spectrum_generator_settings::eft_matching_loop_order_down, 0);
    settings.set(Spectrum_generator_settings::precision, 1.0e-4);
 
    cSMHdCKMRHNEFT_spectrum_generator<Two_scale> spectrum_generator;
@@ -108,6 +110,6 @@ BOOST_AUTO_TEST_CASE( test_high_scale_Yu_equal_Yv_transpose )
 
       high_scale_model.run_to(high_scale);
 
-      BOOST_CHECK(is_equal(high_scale_model.get_Yv(), high_scale_model.get_Yu().transpose(), 1.e-10));
+      BOOST_CHECK(is_equal(high_scale_model.get_Yv(), high_scale_model.get_Yu().transpose(), 1.e-5));
    }
 }
