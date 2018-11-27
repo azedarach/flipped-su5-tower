@@ -1004,12 +1004,15 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fv() const
 
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fv;
 
-   mass_matrix_Fv(0,0) = 0.25*Sqr(v)*Kappa(0,0);
-   mass_matrix_Fv(0,1) = 0.125*Sqr(v)*Kappa(0,1) + 0.125*Sqr(v)*Kappa(1,0);
-   mass_matrix_Fv(0,2) = 0.125*Sqr(v)*Kappa(0,2) + 0.125*Sqr(v)*Kappa(2,0);
-   mass_matrix_Fv(1,1) = 0.25*Sqr(v)*Kappa(1,1);
-   mass_matrix_Fv(1,2) = 0.125*Sqr(v)*Kappa(1,2) + 0.125*Sqr(v)*Kappa(2,1);
-   mass_matrix_Fv(2,2) = 0.25*Sqr(v)*Kappa(2,2);
+   mass_matrix_Fv(0,0) = 0.25*Sqr(v)*Kappa_inv_scale*KappaND(0,0);
+   mass_matrix_Fv(0,1) = 0.125*Sqr(v)*Kappa_inv_scale*KappaND(0,1)
+      + 0.125*Kappa_inv_scale*Sqr(v)*KappaND(1,0);
+   mass_matrix_Fv(0,2) = 0.125*Sqr(v)*Kappa_inv_scale*KappaND(0,2)
+      + 0.125*Sqr(v)*Kappa_inv_scale*KappaND(2,0);
+   mass_matrix_Fv(1,1) = 0.25*Sqr(v)*Kappa_inv_scale*KappaND(1,1);
+   mass_matrix_Fv(1,2) = 0.125*Sqr(v)*Kappa_inv_scale*KappaND(1,2)
+      + 0.125*Sqr(v)*Kappa_inv_scale*KappaND(2,1);
+   mass_matrix_Fv(2,2) = 0.25*Sqr(v)*Kappa_inv_scale*KappaND(2,2);
 
    Symmetrize(mass_matrix_Fv);
 
@@ -2518,8 +2521,8 @@ std::complex<double> CLASSNAME::CpbarFuFdVWpPL(int gO1, int gI2) const
 std::complex<double> CLASSNAME::CpFvFvUhhPL(int gI1, int gI2) const
 {
    const std::complex<double> result = -0.25*v*(
-      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa(j1,j2)))
-      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa(j1,j2))));
+      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa_inv_scale*KappaND(j1,j2)))
+      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa_inv_scale*KappaND(j1,j2))));
 
    return result;
 }
@@ -2527,8 +2530,8 @@ std::complex<double> CLASSNAME::CpFvFvUhhPL(int gI1, int gI2) const
 std::complex<double> CLASSNAME::CpFvFvUhhPR(int gI1, int gI2) const
 {
    const std::complex<double> result = -0.25*v*(
-      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
-      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
+      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa_inv_scale*KappaND(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
+      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa_inv_scale*KappaND(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
 
    return result;
 }
@@ -2536,8 +2539,8 @@ std::complex<double> CLASSNAME::CpFvFvUhhPR(int gI1, int gI2) const
 std::complex<double> CLASSNAME::CpFvFvUAhPL(int gI1, int gI2) const
 {
    const std::complex<double> result = std::complex<double>(0.,0.25)*v*(
-      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa(j1,j2)))
-      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa(j1,j2))));
+      SUM(j2,0,2,Conj(UV(gI2,j2))*SUM(j1,0,2,Conj(UV(gI1,j1))*Kappa_inv_scale*KappaND(j1,j2)))
+      + SUM(j2,0,2,Conj(UV(gI1,j2))*SUM(j1,0,2,Conj(UV(gI2,j1))*Kappa_inv_scale*KappaND(j1,j2))));
 
    return result;
 }
@@ -2545,8 +2548,8 @@ std::complex<double> CLASSNAME::CpFvFvUAhPL(int gI1, int gI2) const
 std::complex<double> CLASSNAME::CpFvFvUAhPR(int gI1, int gI2) const
 {
    const std::complex<double> result = std::complex<double>(0.,-0.25)*v*(
-      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
-      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
+      SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa_inv_scale*KappaND(j1,j2))*UV(gI2,j1))*UV(gI1,j2))
+      + SUM(j2,0,2,SUM(j1,0,2,Conj(Kappa_inv_scale*KappaND(j1,j2))*UV(gI1,j1))*UV(gI2,j2)));
 
    return result;
 }

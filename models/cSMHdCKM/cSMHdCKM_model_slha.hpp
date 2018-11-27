@@ -250,7 +250,7 @@ void cSMHdCKM_slha<Model>::convert_yukawa_couplings_to_slha()
    fs_svd(MODELPARAMETER(Yu), Yu_slha, Uu_slha, Vu_slha);
    fs_svd(MODELPARAMETER(Yd), Yd_slha, Ud_slha, Vd_slha);
    fs_svd(MODELPARAMETER(Ye), Ye_slha, Ue_slha, Ve_slha);
-   fs_diagonalize_symmetric(MODELPARAMETER(Kappa), Kappa_slha, UV_slha);
+   fs_diagonalize_symmetric(this->get_Kappa(), Kappa_slha, UV_slha);
 
 }
 

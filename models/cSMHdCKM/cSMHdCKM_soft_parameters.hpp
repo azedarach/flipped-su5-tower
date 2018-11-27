@@ -36,6 +36,8 @@ class cSMHdCKM_soft_parameters : public cSMHdCKM_susy_parameters {
 public:
    explicit cSMHdCKM_soft_parameters(const cSMHdCKM_input_parameters& input_ = cSMHdCKM_input_parameters());
    cSMHdCKM_soft_parameters(const cSMHdCKM_susy_parameters& , double mu2_, double v_,
+                            double Kappa_inv_scale_, const Eigen::Matrix<std::complex<double>,3,3>& KappaND_);
+   cSMHdCKM_soft_parameters(const cSMHdCKM_susy_parameters& , double mu2_, double v_,
                             const Eigen::Matrix<std::complex<double>,3,3>& Kappa_);
    cSMHdCKM_soft_parameters(const cSMHdCKM_soft_parameters&) = default;
    cSMHdCKM_soft_parameters(cSMHdCKM_soft_parameters&&) = default;
@@ -54,19 +56,26 @@ public:
 
    void set_mu2(double mu2_) { mu2 = mu2_; }
    void set_v(double v_) { v = v_; }
-   void set_Kappa(const Eigen::Matrix<std::complex<double>,3,3>& Kappa_) { Kappa = Kappa_; }
-   void set_Kappa(int i, int k, const std::complex<double>& value) { Kappa(i,k) = value; }
+   void set_Kappa_inv_scale(double Kappa_inv_scale_) { Kappa_inv_scale = Abs(Kappa_inv_scale_); }
+   void set_KappaND(const Eigen::Matrix<std::complex<double>,3,3>& KappaND_) { KappaND = KappaND_; }
+   void set_KappaND(int i, int k, const std::complex<double>& value) { KappaND(i,k) = value; }
+   void set_Kappa(const Eigen::Matrix<std::complex<double>,3,3>& Kappa_);
+   void set_Kappa(int i, int k, const std::complex<double>& value);
 
    double get_mu2() const { return mu2; }
    double get_v() const { return v; }
-   const Eigen::Matrix<std::complex<double>,3,3>& get_Kappa() const { return Kappa; }
-   std::complex<double> get_Kappa(int i, int k) const { return Kappa(i,k); }
+   double get_Kappa_inv_scale() const { return Kappa_inv_scale; }
+   const Eigen::Matrix<std::complex<double>,3,3>& get_KappaND() const { return KappaND; }
+   std::complex<double> get_KappaND(int i, int k) const { return KappaND(i,k); }
 
+   Eigen::Matrix<std::complex<double>,3,3> get_Kappa() const { return Kappa_inv_scale * KappaND; }
+   std::complex<double> get_Kappa(int i, int k) const { return Kappa_inv_scale * KappaND(i,k); }
 
 protected:
    double mu2{};
    double v{};
-   Eigen::Matrix<std::complex<double>,3,3> Kappa{};
+   double Kappa_inv_scale{1.};
+   Eigen::Matrix<std::complex<double>,3,3> KappaND{};
 
 
 private:
@@ -92,11 +101,12 @@ private:
    double calc_beta_v_2_loop(const TRACE_STRUCT_TYPE&) const;
    double calc_beta_v_3_loop(const TRACE_STRUCT_TYPE&) const;
    double calc_beta_v_4_loop(const TRACE_STRUCT_TYPE&) const;
-   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_1_loop(const TRACE_STRUCT_TYPE&) const;
-   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_2_loop(const TRACE_STRUCT_TYPE&) const;
-   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_3_loop(const TRACE_STRUCT_TYPE&) const;
-   Eigen::Matrix<std::complex<double>,3,3> calc_beta_Kappa_4_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_KappaND_1_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_KappaND_2_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_KappaND_3_loop(const TRACE_STRUCT_TYPE&) const;
+   Eigen::Matrix<std::complex<double>,3,3> calc_beta_KappaND_4_loop(const TRACE_STRUCT_TYPE&) const;
 
+   void calculate_KappaND(const Eigen::Matrix<std::complex<double>,3,3>&);
 };
 
 std::ostream& operator<<(std::ostream&, const cSMHdCKM_soft_parameters&);
