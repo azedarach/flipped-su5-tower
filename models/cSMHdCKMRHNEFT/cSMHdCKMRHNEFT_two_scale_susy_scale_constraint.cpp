@@ -32,9 +32,6 @@
 
 #include <cmath>
 
-// @todo remove
-#include <iostream>
-
 namespace flexiblesusy {
 
 #define DERIVEDPARAMETER(p) model->p()
@@ -76,7 +73,6 @@ void cSMHdCKMRHNEFT_susy_scale_constraint<Two_scale>::apply()
    update_scale();
 
    // apply user-defined susy scale constraints
-
    MODEL->solve_ewsb();
 
 }

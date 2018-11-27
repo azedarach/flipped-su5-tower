@@ -13,9 +13,6 @@
 
 #include <cmath>
 
-// @todo remove
-#include <iostream>
-
 namespace flexiblesusy {
 namespace cSMHdCKMRHNEFT_matching {
 
@@ -51,9 +48,6 @@ cSMHdCKM_mass_eigenstates calculate_EFT_tree_level(
    eft_0l.solve_ewsb_tree_level();
    eft_0l.calculate_DRbar_masses();
 
-   std::cout << "calculated EFT at end of calculate_EFT_tree_level:\n";
-   eft_0l.print(std::cout);
-
    return eft_0l;
 }
 
@@ -79,9 +73,6 @@ cSMHdCKMRHN_mass_eigenstates calculate_cSMHdCKMRHN_tree_level(
    model_0l.calculate_DRbar_masses();
 
    match_low_to_high_scale_model_tree_level(model_0l, eft);
-
-   std::cout << "matched model at end of calculate_cSMHdCKMRHN_tree_level:\n";
-   model_0l.print(std::cout);
 
    return model_0l;
 }
@@ -194,11 +185,6 @@ void match_high_to_low_scale_model_1loop(
    const double mh2_eft = Sqr(eft_0l.get_Mhh());
    const double Mh2_eft = calculate_Mh2_pole(eft_0l);
    const double Mh2_bsm = calculate_Mh2_pole(model_0l, model_1l);
-
-   std::cout << "eft tree-level mh2 = " << mh2_eft << '\n';
-   std::cout << "eft Mh2 = " << Mh2_eft << '\n';
-   std::cout << "BSM Mh2 = " << Mh2_bsm << '\n';
-   std::cout << "calculated lambda = " << (Mh2_bsm - Mh2_eft + mh2_eft)/Sqr(eft.get_v()) << '\n';
 
    eft.set_Lambdax((Mh2_bsm - Mh2_eft + mh2_eft)/Sqr(eft.get_v()));
 
@@ -783,7 +769,6 @@ cSMHdCKMRHN_mass_eigenstates calculate_cSMHdCKMRHN_1loop(
    model.set_Ye(((1.4142135623730951*downLeptonsDRbar)/v).transpose());
 
    model.set_Mv(0.5 * Sqr(v) * (Yv * neutrinosDRbar.inverse() * Yv.transpose()));
-
 
    return model;
 }

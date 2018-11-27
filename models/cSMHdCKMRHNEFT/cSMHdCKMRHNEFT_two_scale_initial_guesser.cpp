@@ -9,8 +9,6 @@
 #include "wrappers.hpp"
 
 #include <Eigen/Core>
-// @todo remove
-#include <iostream>
 
 namespace flexiblesusy {
 
@@ -126,23 +124,6 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_eft_parameters()
 
    eft->set_Lambdax(0.12604);
    eft->solve_ewsb_tree_level();
-
-   std::cout << "end of guess eft parameters:\n";
-   eft->print(std::cout);
-   std::cout << "check tree-level masses:\n";
-   eft->calculate_MFu();
-   eft->calculate_MFd();
-   eft->calculate_MFe();
-   eft->calculate_MFv();
-
-   std::cout << "eft MFu = " << eft->get_MFu().transpose() << '\n';
-   std::cout << "expected = " << mu_guess << ", " << mc_guess << ", " << mt_guess << '\n';
-   std::cout << "eft MFd = " << eft->get_MFd().transpose() << '\n';
-   std::cout << "expected = " << md_guess << ", " << ms_guess << ", " << mb_guess << '\n';
-   std::cout << "eft MFe = " << eft->get_MFe().transpose() << '\n';
-   std::cout << "expected = " << me_guess << ", " << mm_guess << ", " << mtau_guess << '\n';
-   std::cout << "eft MFv = " << eft->get_MFv().transpose() << '\n';
-   std::cout << "expected = " << mv1_guess << ", " << mv2_guess << ", " << mv3_guess << '\n';
 }
 
 void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::calculate_DRbar_yukawa_couplings()
@@ -246,27 +227,17 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
    calculate_Yd_DRbar();
    calculate_Ye_DRbar();
    MODEL->set_Yv(eft->get_Yu().transpose());
+   MODEL->set_Lambdax(eft->get_Lambdax());
    }
-
-   std::cout << "after apply susy-scale first guess:\n";
-   model->print(std::cout);
 
    eft->run_to(susy_scale_guess, running_precision);
    eft->calculate_DRbar_masses();
 
-   std::cout << "after running EFT to susy scale guess:\n";
-   eft->print(std::cout);
-
    //get gauge and Yukawa couplings from effective theory
-   std::cout << "performing tree-level matching\n";
    cSMHdCKMRHNEFT_matching_up<Two_scale> matching_up;
    matching_up.set_models(eft, model);
    matching_up.set_scale(scale_getter);
    matching_up.match_tree_level();
-
-   std::cout << "after tree-level matching:\n";
-   eft->print(std::cout);
-   model->print(std::cout);
 
    model->run_to(susy_scale_guess, running_precision);
 
@@ -274,24 +245,18 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
    susy_constraint.set_model(model);
    susy_constraint.apply();
 
-   std::cout << "after applying susy scale constraint:\n";
-   model->print(std::cout);
-
    // run to high scale
    model->run_to(high_scale_guess, running_precision);
 
    // apply user-defined initial guess at the high scale
    {
-   
+
 
    }
 
    // apply high-scale constraint
    high_constraint.set_model(model);
    high_constraint.apply();
-
-   std::cout << "after applying high scale constraint:\n";
-   model->print(std::cout);
 
    model->run_to(susy_scale_guess, running_precision);
 
@@ -300,9 +265,6 @@ void cSMHdCKMRHNEFT_initial_guesser<Two_scale>::guess_model_parameters()
 
    // calculate tree-level spectrum
    model->calculate_DRbar_masses();
-
-   std::cout << "end of guess model parameters:\n";
-   model->print(std::cout);
 }
 
 } // namespace flexiblesusy
