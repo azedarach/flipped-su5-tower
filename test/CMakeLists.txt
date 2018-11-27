@@ -3,6 +3,7 @@ set(cSMHdCKM_TEST_TARGETS
 )
 
 set(cSMHdCKMRHNEFT_TEST_TARGETS
+  test_cSMHdCKMRHNEFT_boundary_conditions
   test_cSMHdCKMRHNEFT_low_scale_constraint
 )
 
