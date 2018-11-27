@@ -64,7 +64,8 @@ private:
    Eigen::Matrix<std::complex<double>,3,3> downQuarksDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<std::complex<double>,3,3> downLeptonsDRbar{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
    Eigen::Matrix<double,3,3> neutrinoDRbar{Eigen::Matrix<double,3,3>::Zero()};
-   Eigen::Matrix<std::complex<double>,3,3> neutrinoMix{Eigen::Matrix<std::complex<double>,3,3>::Zero()};
+   Eigen::Matrix<double,3,3> neutrinoBasis{Eigen::Matrix<double,3,3>::Identity()};
+   Eigen::Matrix<std::complex<double>,3,3> neutrinoMix{Eigen::Matrix<std::complex<double>,3,3>::Identity()};
    double mW_run{0.};
    double mZ_run{0.};
    double AlphaS{0.};
@@ -81,7 +82,8 @@ private:
    void calculate_Ye_DRbar();
    void calculate_Kappa();
    void calculate_running_SM_masses();
-   void calculate_neutrino_mixings();
+   void calculate_neutrino_basis();
+   void calculate_neutrino_mixing();
    double calculate_delta_alpha_em(double) const;
    double calculate_delta_alpha_s(double) const;
    double calculate_alpha_s_SM5_at(softsusy::QedQcd, double) const;

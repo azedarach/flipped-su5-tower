@@ -72,15 +72,6 @@ void cSMHdCKM_slha_io::set_extpar(const cSMHdCKM_input_parameters& input)
    extpar << FORMAT_ELEMENT(0, input.Qin, "Qin");
    extpar << FORMAT_ELEMENT(1, input.QEWSB, "QEWSB");
    extpar << FORMAT_ELEMENT(2, input.sign_delta_mAsq, "sign_delta_mAsq");
-   extpar << FORMAT_ELEMENT(3, input.UV_theta21, "UV_theta21");
-   extpar << FORMAT_ELEMENT(4, input.UV_theta31, "UV_theta31");
-   extpar << FORMAT_ELEMENT(5, input.UV_theta32, "UV_theta32");
-   extpar << FORMAT_ELEMENT(6, input.UV_phi21, "UV_phi21");
-   extpar << FORMAT_ELEMENT(7, input.UV_phi31, "UV_phi31");
-   extpar << FORMAT_ELEMENT(8, input.UV_phi32, "UV_phi32");
-   extpar << FORMAT_ELEMENT(9, input.UV_chi21, "UV_chi21");
-   extpar << FORMAT_ELEMENT(10, input.UV_chi32, "UV_chi32");
-   extpar << FORMAT_ELEMENT(11, input.UV_gamma, "UV_gamma");
    slha_io.set_block(extpar);
 
 }
@@ -142,7 +133,8 @@ void cSMHdCKM_slha_io::set_input(const cSMHdCKM_input_parameters& input)
    set_imminpar(input);
    set_imextpar(input);
 
-
+   slha_io.set_block("UvIN", INPUTPARAMETER(UvInput), "UvInput");
+   slha_io.set_block_imag("ImUvIN", INPUTPARAMETER(UvInput), "UvInput");
 }
 
 /**
@@ -473,7 +465,13 @@ void cSMHdCKM_slha_io::fill(cSMHdCKM_input_parameters& input) const
    slha_io.read_block("IMMINPAR", imminpar_processor);
    slha_io.read_block("IMEXTPAR", imextpar_processor);
 
+   Eigen::Matrix<double, 3, 3> ReUvInput(Eigen::Matrix<double, 3, 3>::Zero());
+   Eigen::Matrix<double, 3, 3> ImUvInput(Eigen::Matrix<double, 3, 3>::Zero());
+   slha_io.read_block("UvIN", ReUvInput);
+   slha_io.read_block("ImUvIN", ImUvInput);
 
+   input.UvInput.real() = ReUvInput;
+   input.UvInput.imag() = ImUvInput;
 }
 
 /**
@@ -571,15 +569,6 @@ void cSMHdCKM_slha_io::fill_extpar_tuple(cSMHdCKM_input_parameters& input,
    case 0: input.Qin = value; break;
    case 1: input.QEWSB = value; break;
    case 2: input.sign_delta_mAsq = Sign(value); break;
-   case 3: input.UV_theta21 = value; break;
-   case 4: input.UV_theta31 = value; break;
-   case 5: input.UV_theta32 = value; break;
-   case 6: input.UV_phi21 = value; break;
-   case 7: input.UV_phi31 = value; break;
-   case 8: input.UV_phi32 = value; break;
-   case 9: input.UV_chi21 = value; break;
-   case 10: input.UV_chi32= value; break;
-   case 11: input.UV_gamma = value; break;
 
    default: WARNING("Unrecognized entry in block EXTPAR: " << key); break;
    }

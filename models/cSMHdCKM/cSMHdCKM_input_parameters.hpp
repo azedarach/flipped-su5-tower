@@ -33,16 +33,9 @@ struct cSMHdCKM_input_parameters {
    double Qin{};
    double QEWSB{};
    int sign_delta_mAsq{1};
-   double UV_theta21{0.};
-   double UV_theta31{0.};
-   double UV_theta32{0.};
-   double UV_phi21{Pi};
-   double UV_phi31{0.};
-   double UV_phi32{0.};
-   double UV_chi21{0.};
-   double UV_chi32{0.};
-   double UV_gamma{0.};
 
+   Eigen::Matrix<std::complex<double>, 3, 3> UvInput{
+      Eigen::Matrix<std::complex<double>, 3, 3>::Zero()};
 
    Eigen::ArrayXd get() const;
    void set(const Eigen::ArrayXd&);
