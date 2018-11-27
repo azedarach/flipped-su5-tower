@@ -198,6 +198,9 @@ void cSMHdCKMRHNEFT_spectrum_generator_interface<T>::translate_exception_to_prob
    } catch (const NoSinThetaWConvergenceError&) {
       model.get_problems().flag_no_sinThetaW_convergence();
       eft.get_problems().flag_no_sinThetaW_convergence();
+   } catch (const SetupError& error) {
+      model.get_problems().flag_thrown(error.what());
+      eft.get_problems().flag_thrown(error.what());
    } catch (const Error& error) {
       model.get_problems().flag_thrown(error.what());
       eft.get_problems().flag_thrown(error.what());
