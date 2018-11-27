@@ -516,8 +516,8 @@ void cSMHdCKMRHNEFT_slha_io::fill(cSMHdCKMRHNEFT_input_parameters& input) const
    slha_io.read_block("IMMINPAR", imminpar_processor);
    slha_io.read_block("IMEXTPAR", imextpar_processor);
 
-   Eigen::Matrix<double, 3, 3> ReUvInput;
-   Eigen::Matrix<double, 3, 3> ImUvInput;
+   Eigen::Matrix<double, 3, 3> ReUvInput(Eigen::Matrix<double, 3, 3>::Zero());
+   Eigen::Matrix<double, 3, 3> ImUvInput(Eigen::Matrix<double, 3, 3>::Zero());
    slha_io.read_block("UvIN", ReUvInput);
    slha_io.read_block("ImUvIN", ImUvInput);
 
