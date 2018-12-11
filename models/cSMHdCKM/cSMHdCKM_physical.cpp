@@ -73,7 +73,7 @@ Eigen::ArrayXd cSMHdCKM_physical::get() const
 {
    Eigen::ArrayXd pars(get_masses());
 
-   pars.conservativeResize(131);
+   pars.conservativeResize(149);
 
    pars(19) = Re(Vd(0,0));
    pars(20) = Im(Vd(0,0));
