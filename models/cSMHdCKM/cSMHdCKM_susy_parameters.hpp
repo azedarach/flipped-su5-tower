@@ -39,9 +39,10 @@ namespace flexiblesusy {
 class cSMHdCKM_susy_parameters : public Beta_function {
 public:
    explicit cSMHdCKM_susy_parameters(const cSMHdCKM_input_parameters& input_ = cSMHdCKM_input_parameters());
-   cSMHdCKM_susy_parameters(double scale_, int loops_, int thresholds_, const cSMHdCKM_input_parameters& input_, double g1_, double g2_, double g3_, double Lambdax_, const Eigen::Matrix<std
-   ::complex<double>,3,3>& Yd_, const Eigen::Matrix<std::complex<double>,3,3>&
-   Ye_, const Eigen::Matrix<std::complex<double>,3,3>& Yu_);
+   cSMHdCKM_susy_parameters(double scale_, int loops_, int thresholds_, const cSMHdCKM_input_parameters& input_,
+                            double g1_, double g2_, double g3_, double Lambdax_, const Eigen::Matrix<std
+                            ::complex<double>,3,3>& Yd_, const Eigen::Matrix<std::complex<double>,3,3>&
+                            Ye_, const Eigen::Matrix<std::complex<double>,3,3>& Yu_);
    cSMHdCKM_susy_parameters(const cSMHdCKM_susy_parameters&) = default;
    cSMHdCKM_susy_parameters(cSMHdCKM_susy_parameters&&) = default;
    virtual ~cSMHdCKM_susy_parameters() = default;
