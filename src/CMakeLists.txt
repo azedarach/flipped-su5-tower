@@ -29,6 +29,7 @@ set(FLEXISUSY_SRC
   threshold_corrections.cpp
   threshold_loop_functions.cpp
   weinberg_angle.cpp
+  wittens_loop.cpp
   wrappers.cpp)
 
 if(ENABLE_TWO_SCALE_SOLVER)
