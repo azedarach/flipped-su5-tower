@@ -56,9 +56,9 @@ double NMFSU5EFT_spectrum_generator<Two_scale>::get_eft_pole_mass_scale(
  * @param qedqcd Standard Model input parameters
  * @param input model input parameters
  */
-void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
+void NMFSU5EFT_spectrum_generator<Two_scale>::run_except(
    const softsusy::QedQcd& qedqcd,
-   const cSMHdCKMRHNEFT_input_parameters& input)
+   const NMFSU5EFT_input_parameters& input)
 {
    VERBOSE_MSG("Solving BVP using two-scale solver");
 
@@ -199,14 +199,14 @@ void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::run_except(
  *
  * @param filename name of output file
  */
-void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::write_running_couplings(
+void NMFSU5EFT_spectrum_generator<Two_scale>::write_running_couplings(
    const std::string& filename) const
 {
-   cSMHdCKMRHNEFT_spectrum_generator_interface<Two_scale>::write_running_couplings(
+   NMFSU5EFT_spectrum_generator_interface<Two_scale>::write_running_couplings(
       filename, get_low_scale(), get_high_scale());
 }
 
-void cSMHdCKMRHNEFT_spectrum_generator<Two_scale>::calculate_spectrum(double Mt, double MW)
+void NMFSU5EFT_spectrum_generator<Two_scale>::calculate_spectrum(double Mt, double MW)
 {
    model.run_to(get_pole_mass_scale(susy_scale));
    model.solve_ewsb();

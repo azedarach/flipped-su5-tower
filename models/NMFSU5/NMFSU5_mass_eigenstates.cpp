@@ -998,6 +998,29 @@ Eigen::Matrix<std::complex<double>,6,6> CLASSNAME::get_mass_matrix_Fv() const
 
    Eigen::Matrix<std::complex<double>,6,6> mass_matrix_Fv;
 
+   mass_matrix_Fv(0,0) = 0;
+   mass_matrix_Fv(0,1) = 0;
+   mass_matrix_Fv(0,2) = 0;
+   mass_matrix_Fv(0,3) = -0.7071067811865475 * (Y5b(0,0) * v + Y5bPr(0,0) * vPr);
+   mass_matrix_Fv(0,4) = -0.7071067811865475 * (Y5b(1,0) * v + Y5bPr(1,0) * vPr);
+   mass_matrix_Fv(0,5) = -0.7071067811865475 * (Y5b(2,0) * v + Y5bPr(2,0) * vPr);
+   mass_matrix_Fv(1,1) = 0;
+   mass_matrix_Fv(1,2) = 0;
+   mass_matrix_Fv(1,3) = -0.7071067811865475 * (Y5b(0,1) * v + Y5bPr(0,1) * vPr);
+   mass_matrix_Fv(1,4) = -0.7071067811865475 * (Y5b(1,1) * v + Y5bPr(1,1) * vPr);
+   mass_matrix_Fv(1,5) = -0.7071067811865475 * (Y5b(2,1) * v + Y5bPr(2,1) * vPr);
+   mass_matrix_Fv(2,2) = 0;
+   mass_matrix_Fv(2,3) = -0.7071067811865475 * (Y5b(0,2) * v + Y5bPr(0,2) * vPr);
+   mass_matrix_Fv(2,4) = -0.7071067811865475 * (Y5b(1,2) * v + Y5bPr(1,1) * vPr);
+   mass_matrix_Fv(2,5) = -0.7071067811865475 * (Y5b(2,2) * v + Y5bPr(2,2) * vPr);
+   mass_matrix_Fv(3,3) = 0;
+   mass_matrix_Fv(3,4) = 0;
+   mass_matrix_Fv(3,5) = 0;
+   mass_matrix_Fv(4,4) = 0;
+   mass_matrix_Fv(4,5) = 0;
+   mass_matrix_Fv(5,5) = 0;
+
+   Symmetrize(mass_matrix_Fv);
 
    return mass_matrix_Fv;
 }
@@ -1023,6 +1046,17 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fd() const
 
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fd;
 
+   mass_matrix_Fd(0,0) = -0.5 * (Y10(0,0) * v + Y10Pr(0,0) * vPr);
+   mass_matrix_Fd(0,1) = -0.25 * (Y10(0,1) * v + Y10(1,0) * v
+                                  + Y10Pr(0,1) * vPr + Y10Pr(1,0) * vPr);
+   mass_matrix_Fd(0,2) = -0.25 * (Y10(0,2) * v + Y10(2,0) * v
+                                  + Y10Pr(0,2) * vPr + Y10Pr(2,0) * vPr);
+   mass_matrix_Fd(1,1) = -0.5 * (Y10(1,1) * v + Y10Pr(1,1) * vPr);
+   mass_matrix_Fd(1,2) = -0.25 * (Y10(1,2) * v + Y10(2,1) * v
+                                  + Y10Pr(1,2) * vPr + Y10Pr(2,1) * vPr);
+   mass_matrix_Fd(2,2) = -0.5 * (Y10(2,2) * v + Y10Pr(2,2) * vPr);
+
+   Symmetrize(mass_matrix_Fd);
 
    return mass_matrix_Fd;
 }
@@ -1048,6 +1082,15 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fu() const
 
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fu;
 
+   mass_matrix_Fu(0,0) = -0.7071067811865475 * (Y5b(0,0) * v + Y5bPr(0,0) * vPr);
+   mass_matrix_Fu(0,1) = -0.7071067811865475 * (Y5b(0,1) * v + Y5bPr(0,1) * vPr);
+   mass_matrix_Fu(0,2) = -0.7071067811865475 * (Y5b(0,2) * v + Y5bPr(0,2) * vPr);
+   mass_matrix_Fu(1,0) = -0.7071067811865475 * (Y5b(1,0) * v + Y5bPr(1,0) * vPr);
+   mass_matrix_Fu(1,1) = -0.7071067811865475 * (Y5b(1,1) * v + Y5bPr(1,1) * vPr);
+   mass_matrix_Fu(1,2) = -0.7071067811865475 * (Y5b(1,2) * v + Y5bPr(1,2) * vPr);
+   mass_matrix_Fu(2,0) = -0.7071067811865475 * (Y5b(2,0) * v + Y5bPr(2,0) * vPr);
+   mass_matrix_Fu(2,1) = -0.7071067811865475 * (Y5b(2,1) * v + Y5bPr(2,1) * vPr);
+   mass_matrix_Fu(2,2) = -0.7071067811865475 * (Y5b(2,2) * v + Y5bPr(2,2) * vPr);
 
    return mass_matrix_Fu;
 }
@@ -1073,6 +1116,15 @@ Eigen::Matrix<std::complex<double>,3,3> CLASSNAME::get_mass_matrix_Fe() const
 
    Eigen::Matrix<std::complex<double>,3,3> mass_matrix_Fe;
 
+   mass_matrix_Fe(0,0) = Y1(0,0) * v + Y1Pr(0,0) * vPr;
+   mass_matrix_Fe(0,1) = Y1(0,1) * v + Y1Pr(0,1) * vPr;
+   mass_matrix_Fe(0,2) = Y1(0,2) * v + Y1Pr(0,2) * vPr;
+   mass_matrix_Fe(1,0) = Y1(1,0) * v + Y1Pr(1,0) * vPr;
+   mass_matrix_Fe(1,1) = Y1(1,1) * v + Y1Pr(1,1) * vPr;
+   mass_matrix_Fe(1,2) = Y1(1,2) * v + Y1Pr(1,2) * vPr;
+   mass_matrix_Fe(2,0) = Y1(2,0) * v + Y1Pr(2,0) * vPr;
+   mass_matrix_Fe(2,1) = Y1(2,1) * v + Y1Pr(2,1) * vPr;
+   mass_matrix_Fe(2,2) = Y1(2,2) * v + Y1Pr(2,2) * vPr;
 
    return mass_matrix_Fe;
 }

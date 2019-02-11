@@ -36,11 +36,13 @@ public:
 protected:
    void update_scale();
    bool check_non_perturbative();
+   bool check_high_scale_non_perturbative();
 
 private:
    double scale{0.};
    double initial_scale_guess{0.};
    cSMHdCKMRHN<Two_scale>* model{nullptr};
+   NMFSU5<Two_scale>* high_scale_model{nullptr};
    NMFSU5EFT_input_parameters input{};
 
    void check_model_ptr() const;
