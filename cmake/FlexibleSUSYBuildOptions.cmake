@@ -4,7 +4,7 @@ include(CMakeDependentOption)
 # enable/disable FlexibleSUSY components
 option(ENABLE_COLORS "Colored output (default: no)" OFF)
 option(ENABLE_COMPILE "Compile the source code (default: yes)" ON)
-option(ENABLE_COMPILER_WARNINGS "Enable compiler warnings (default: no)" OFF)
+option(ENABLE_COMPILER_WARNINGS "Enable compiler warnings (default: yes)" ON)
 option(ENABLE_DEBUG "Enable debug output (default: no)" OFF)
 option(ENABLE_GM2Calc "Enable use of the GM2Calc addon (default: no)" OFF)
 # option(ENABLE_ILP64MKL_WORKAROUND "Enable use ILP64MKL workaround (default: yes)" ON)
